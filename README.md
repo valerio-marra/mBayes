@@ -5,7 +5,7 @@
 If dealing with high-dimensional degenerate posteriors please consider tools such as [emcee](https://github.com/dfm/emcee) or [CosmoHammer](https://github.com/cosmo-ethz/CosmoHammer).
 
 Have fun,
-Valerio
+[Valerio](http://inspirehep.net/author/profile/V.Marra.1)
 
 ### Features
 
@@ -40,7 +40,7 @@ Mathematica 11.3 is much less forgiving than previous versions. When using Mathe
 
 ### Acknowledgements
 
-Valerio Marra acknowledges contributions from Tiago Castro, Miguel Quartin and the awesome community of [mathematica.stackexchange](https://mathematica.stackexchange.com). The use of the color palettes developed by Paul Tol (personal.sron.nl/~pault) and [colorbrewer2](http://colorbrewer2.org) is acknowledged.
+Valerio Marra acknowledges contributions from [Tiago Castro](http://inspirehep.net/author/profile/T.Castro.1), [Miguel Quartin](http://inspirehep.net/author/profile/M.Quartin.1) and the awesome community of [mathematica.stackexchange](https://mathematica.stackexchange.com). The use of the color palettes developed by Paul Tol (personal.sron.nl/~pault) and [colorbrewer2](http://colorbrewer2.org) is acknowledged.
 
 
 ### Credits
