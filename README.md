@@ -12,7 +12,7 @@ Have fun,
 At the moment, the following features are implemented:
 * multivariate and flat priors
 * variables can be easily fixed
-* fisher approximation for likelihood and posterior
+* Fisher matrix approximation for likelihood and posterior
 * fisher and numerical evidence
 * grid optimization with fisher
 * optimized parallel computation and exportation 
