@@ -6,7 +6,6 @@
 **mBayes** is not meant for too demanding projects for which one is advised to use advanced tools such as [emcee](https://github.com/dfm/emcee) or [CosmoHammer](https://github.com/cosmo-ethz/CosmoHammer).
 
 Have fun,
-
 Valerio
 
 ### Features
@@ -27,11 +26,11 @@ At the moment, the following features are implemented:
 
 To run the code you should use Mathematica 11; earlier version may show some incompatibilities. Do note move the Mathematica files from the relative folders.
 
-Start by opening the notebook "1-exploration.nb". There you should customize Section 2 (Glue code) and Section 3 (Parameter space and prior). Please read the comments for help. The result is automatically saved in the folder "results-chi2".
+Start by opening the notebook *1-exploration.nb*. There you should customize Section 2 (Glue code) and Section 3 (Parameter space and prior). Please read the comments for help. The result is automatically saved in the folder *results-chi2*.
 
-Once the posterior has been explored, you should open "2-analysis.nb", rename the relevant variables and run everything. The plots and the other products are automatically saved in the folder "results-analysis".
+Once the posterior has been explored, you should open *2-analysis.nb*, rename the relevant variables and run everything. The plots and the other products are automatically saved in the folder *results-analysis*.
 
-"1-exploration.nb" and "2-analysis.nb" are distinct so that you may associate a different kernel to them and, for example, run "2-analysis.nb" while "1-exploration.nb" is busy doing something else.
+*1-exploration.nb* and *2-analysis.nb* are distinct so that you may associate a different kernel to them and, for example, run *2-analysis.nb* while *1-exploration.nb* is busy doing something else.
 
 I will put asap a video for a quick overview of **mBayes**' functionalities and workflow.
 
