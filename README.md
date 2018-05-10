@@ -2,7 +2,6 @@
 ## Bayesian inference with Wolfram Mathematica
 
 **mBayes** aims at helping researchers to effortlessly carry out Bayesian inference within Wolfram Mathematica. Much of the workflow has been automatized. At the moment, **mBayes** explores the posterior on a grid. This works reasonably well for posteriors up to 4-5 dimensions. If the posterior is close to a multivariate Gaussian distribution, then **mBayes** can save a lot of time by exploring only a suitable ellipsoid obtained via the Fisher matrix.
-
 **mBayes** is not meant for too demanding projects for which one is advised to use advanced tools such as [emcee](https://github.com/dfm/emcee) or [CosmoHammer](https://github.com/cosmo-ethz/CosmoHammer).
 
 Have fun,
@@ -41,7 +40,7 @@ Mathematica 11.3 is much less forgiving than previous versions. When using Mathe
 
 ### Acknowledgements
 
-Valerio Marra acknowledges contributions from Tiago Castro, Miguel Quartin and the awesome community of mathematica.stackexchange.com. The use of the color palettes developed by Paul Tol (personal.sron.nl/~pault) and colorbrewer2.org is acknowledged.
+Valerio Marra acknowledges contributions from Tiago Castro, Miguel Quartin and the awesome community of [mathematica.stackexchange](https://mathematica.stackexchange.com). The use of the color palettes developed by Paul Tol (personal.sron.nl/~pault) and [colorbrewer2](http://colorbrewer2.org) is acknowledged.
 
 
 ### Credits
