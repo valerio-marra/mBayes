@@ -33,6 +33,12 @@ Once the posterior has been explored, you should open *2-analysis.nb*, rename th
 
 I will put asap a video for a quick overview of **mBayes**' functionalities and workflow.
 
+### Credits
+
+You can use mBayes, or part of it, freely, provided that in your publications you acknowledge its use and cite the paper Camarena & Marra <https://arxiv.org/abs/1805.xxxxx>.
+If using the provided JLA catalog, please cite [Betoule et al 2014](https://arxiv.org/abs/1401.4064).
+
+
 ### Known issues
 
 Mathematica 11.3 is much less forgiving than previous versions. When using Mathematica 11.3 the marginalization routines may give some (inconsequential, most of the times) errors.
@@ -41,28 +47,3 @@ Mathematica 11.3 is much less forgiving than previous versions. When using Mathe
 ### Acknowledgements
 
 Valerio Marra acknowledges contributions from [Tiago Castro](http://inspirehep.net/author/profile/T.Castro.1), [Miguel Quartin](http://inspirehep.net/author/profile/M.Quartin.1) and the awesome community of [mathematica.stackexchange](https://mathematica.stackexchange.com). The use of the color palettes developed by Paul Tol (personal.sron.nl/~pault) and [colorbrewer2](http://colorbrewer2.org) is acknowledged.
-
-
-### Credits
-
-You can use mBayes, or part of it, freely, provided that in your publications you acknowledge its use and cite the paper Camarena & Marra <https://arxiv.org/abs/1805.xxxxx>.
-If using the provided JLA catalog, please cite [Betoule et al 2014](https://arxiv.org/abs/1401.4064).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
