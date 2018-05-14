@@ -141,7 +141,7 @@ dbinsB
 );
 
 
-stepgrid[i_]:=1.(pSet[[i,2]]-pSet[[i,1]])/(ngrid[[i]]-1);
+(*stepgrid[i_]:=1.(pSet[[i,2]]-pSet[[i,1]])/(ngrid[[i]]-1);*)
 
 (*stepgridx[i_]:=(
 zeros=ConstantArray[0,pardim];
@@ -155,10 +155,11 @@ If[
 $VersionNumber<11.3
 ,
 
-marginalizeTab[pp_, tab_] := 
+marginalizeTab[pp_, tabin_] := 
 Module[
-	{newtab, id, d = Dimensions[tab][[-1]] - 1}
+	{tab, newtab, id, d = Dimensions[tabin][[-1]] - 1}
 	,
+	tab=Developer`ToPackedArray[tabin];
 	id = ConstantArray[1, d];
 	id[[pp]] = All;
 	newtab = Transpose[tab[[Sequence @@ id, {Sequence @@ pp, -1}]], Ordering[pp]];
@@ -261,10 +262,11 @@ Module[
 ];
 
 (* given a chi2 table it returns the evidence, assuming that chi2 = -2 Log[prior x likelihood] *)
-evidence[tab_]:=
+evidence[tabin_]:=
 Module[
-	{d = Dimensions[tab][[-1]] - 1, idx, parTabDiff, parTensDiff,evid}
+	{d = Dimensions[tabin][[-1]] - 1,tab, idx, parTabDiff, parTensDiff,evid}
 	,
+	tab=Developer`ToPackedArray[tabin];
 	parTabDiff=ConstantArray[1, d];
 	Do[
 		idx = ConstantArray[1, d];

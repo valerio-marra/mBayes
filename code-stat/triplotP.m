@@ -77,11 +77,13 @@ parnamesx=(Text[Style[#,FontSize->textsize]]&/@(parlabels));
 seq:=Sequence;
 
 te1=Flatten[Table[{i,j},{i,pardimtri},{j,i}],1];
-LaunchKernels[If[pardimtri (pardimtri+1)/2<$ConfiguredKernels[[1]][[1]],pardimtri (pardimtri+1)/2,$ConfiguredKernels[[1]][[1]]]];
+triplotkernels=If[triplotkernels==0,If[pardimtri (pardimtri+1)/2<$ConfiguredKernels[[1]][[1]],pardimtri (pardimtri+1)/2,$ConfiguredKernels[[1]][[1]]],triplotkernels];
+LaunchKernels[triplotkernels];
 DistributeDefinitions["Global`"];
 SetSharedFunction[potrix];
 ParallelMap[auxtrimar[#[[1]],#[[2]],tlabel,tab,parlabels,nlevelx,style1d,style2d]&,te1];
 CloseKernels[];
+UnsetShared[potrix];
 
 With[
 {
