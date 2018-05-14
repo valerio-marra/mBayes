@@ -1,9 +1,45 @@
 (* ::Package:: *)
 
+auxtrimar[i_,j_,tlabel_,tab_,parlabels_,nlevelx_,style1d_,style2d_]:=(
+If[i==j,
+	{xminp,xmaxp}={pSetri[[i,1]],pSetri[[i,2]]};
+	plotname=i;
+	chi2Tab=marginalizeTab[{plotname},tab];
+	(*Print[Dimensions[chi2Tab]];*)
+	plot1d[chi2Tab,parnamesx[[plotname]],1];
+	Get["code-stat/c-levels.m"];
+	clev;
+	potrix[tlabel,i,i]=Plot[Likel[x],{x,xminp,xmaxp},AspectRatio->arato,Frame->True(*,PlotRange->Full*),FrameStyle->textsize2,ImageMargins->0,Axes->False,Filling->style1d[[1]],PlotStyle->style1d[[2]],PlotRange->{{xminp,xmaxp},All},PlotRangePadding->None,
+	FrameTicks->{{None,None},{custTicksX[[i]],None}},
+			Evaluate@Which[
+			i==1,seq[FrameLabel->{{nada,None},{None,None}},ImagePadding->{{padlabely,padnonumbers},{padnolabelx,padnonumbers}},ImageSize->{framesize+padlabely+padnonumbers,framesize+padnolabelx+padnonumbers}],
+			i==pardimtri,seq[FrameLabel->{{None,None},{parnamesx[[i]],None}},ImagePadding->{{padnolabely,padnonumbers},{padlabelx,padnonumbers}},ImageSize->{framesize+padnolabely+padnonumbers,framesize+padlabelx+padnonumbers}],
+			1<i<pardimtri,seq[FrameLabel->{None,None},ImagePadding->{{padnolabely,padnonumbers},{padnolabelx,padnonumbers}},ImageSize->{framesize+padnolabely+padnonumbers,framesize+padnolabelx+padnonumbers}]],
+			GridLines->Ltgrids,GridLinesStyle->Directive[Black,Dashed]];
+,
+	{xminp,xmaxp}={pSetri[[j,1]],pSetri[[j,2]]};
+	{yminp,ymaxp}={pSetri[[i,1]],pSetri[[i,2]]};
+	If[pardimtri>2,chi2Tab=marginalizeTab[{j,i},tab];,chi2Tab=tab;];
+	(*Print[Dimensions[chi2Tab]];*)
+	Get["code-stat/a-levels.m"];
+	plotnames={j,i};
+	blev;
+	potrix[tlabel,i,j]=ListContourPlot[dchi2TabF,AspectRatio->arato,Frame->True(*,PlotRange->Full*),FrameStyle->textsize2,ImageMargins->0,Contours->levels,RotateLabel->True,ContourShading->style2d[[1]],ContourStyle->style2d[[2]],InterpolationOrder->intord(*,Epilog->Inset[Graphics[{Black,Rectangle[]}],posc,Center,Scaled[.03]]*),Axes->False,
+	PlotRange->{{xminp,xmaxp},{yminp,ymaxp}},FrameTicks->{{custTicksY[[i-1]],None},{custTicksX[[j]],None}},PlotRangePadding->None,
+	Evaluate@Which[
+			i==pardimtri&&j>1,seq[FrameLabel->{{None,None},{parnamesx[[j]],None}},ImagePadding->{{padnolabely,padnonumbers},{padlabelx,padnonumbers}},ImageSize->{framesize+padnolabely+padnonumbers,framesize+padlabelx+padnonumbers}],
+			i==pardimtri&&j==1,seq[FrameLabel->{{parnamesx[[i]],None},{parnamesx[[j]],None}},ImagePadding->{{padlabely,padnonumbers},{padlabelx,padnonumbers}},ImageSize->{framesize+padlabely+padnonumbers,framesize+padlabelx+padnonumbers}],
+			i>1&&j==1,seq[FrameLabel->{{parnamesx[[i]],None},{None,None}},ImagePadding->{{padlabely,padnonumbers},{padnolabelx,padnonumbers}},ImageSize->{framesize+padlabely+padnonumbers,framesize+padnolabelx+padnonumbers}],
+			i>j,seq[FrameLabel->{None,None},ImagePadding->{{padnolabely,padnonumbers},{padnolabelx,padnonumbers}},ImageSize->{framesize+padnolabely+padnonumbers,framesize+padnolabelx+padnonumbers}]
+			]];
+]
+);
+
+
 TriPlotP[tlabel_,tab_,parlabels_,nlevelx_,style1d_,style2d_]:=(
 
 pardimtri=Length[parlabels];
-pSetri[tlabel]=CoordinateBounds[chi2TabPar][[;;-2]];
+pSetri=CoordinateBounds[tab][[;;-2]];
 
 intord=1; (* interpolation order *)
 
@@ -40,48 +76,27 @@ parnamesx=(Text[Style[#,FontSize->textsize]]&/@(parlabels));
 
 seq:=Sequence;
 
+te1=Flatten[Table[{i,j},{i,pardimtri},{j,i}],1];
+LaunchKernels[If[pardimtri (pardimtri+1)/2<$ConfiguredKernels[[1]][[1]],pardimtri (pardimtri+1)/2,$ConfiguredKernels[[1]][[1]]]];
+DistributeDefinitions["Global`"];
+SetSharedFunction[potrix];
+ParallelMap[auxtrimar[#[[1]],#[[2]],tlabel,tab,parlabels,nlevelx,style1d,style2d]&,te1];
+CloseKernels[];
+
 With[
 {
-	dt=tab,
-	ca=ConstantArray[Null,{pardimtri,pardimtri}],
-	opts=Sequence[AspectRatio->arato,Frame->True(*,PlotRange->Full*),FrameStyle->textsize2,ImageMargins->0]
+	ca=ConstantArray[Null,{pardimtri,pardimtri}]
 },
 (*Graphics*)Grid[ReplacePart[ca,
 	{
 	{i_,i_}:>
-		({xminp,xmaxp}={pSetri[tlabel][[i,1]],pSetri[tlabel][[i,2]]};
-		plotname=i;
-		chi2Tab=marginalizeTab[{plotname},dt];
-		plot1d[chi2Tab,parnamesx[[plotname]],1];
-		Get["code-stat/c-levels.m"];
-		clev;
-		potrix[tlabel,i,i]=Plot[Likel[x],{x,xminp,xmaxp},opts,Axes->False,Filling->style1d[[1]],PlotStyle->style1d[[2]],PlotRange->{{xminp,xmaxp},All},PlotRangePadding->None,
-		FrameTicks->{{None,None},{custTicksX[[i]],None}},
-			Evaluate@Which[
-			i==1,seq[FrameLabel->{{nada,None},{None,None}},ImagePadding->{{padlabely,padnonumbers},{padnolabelx,padnonumbers}},ImageSize->{framesize+padlabely+padnonumbers,framesize+padnolabelx+padnonumbers}],
-			i==pardimtri,seq[FrameLabel->{{None,None},{parnamesx[[i]],None}},ImagePadding->{{padnolabely,padnonumbers},{padlabelx,padnonumbers}},ImageSize->{framesize+padnolabely+padnonumbers,framesize+padlabelx+padnonumbers}],
-			1<i<pardimtri,seq[FrameLabel->{None,None},ImagePadding->{{padnolabely,padnonumbers},{padnolabelx,padnonumbers}},ImageSize->{framesize+padnolabely+padnonumbers,framesize+padnolabelx+padnonumbers}]],
-			GridLines->Ltgrids,GridLinesStyle->Directive[Black,Dashed]];
+		(
 		potrix[tlabel,i,i]
 		),
 	{i_,j_}/;i>j:>
-	(
-		{xminp,xmaxp}={pSetri[tlabel][[j,1]],pSetri[tlabel][[j,2]]};
-		{yminp,ymaxp}={pSetri[tlabel][[i,1]],pSetri[tlabel][[i,2]]};
-		If[pardimtri>2,chi2Tab=marginalizeTab[{j,i},dt];,chi2Tab=dt;];
-		Get["code-stat/a-levels.m"];
-		plotnames={j,i};
-		blev;
-		potrix[tlabel,i,j]=ListContourPlot[dchi2TabF,Contours->levels,RotateLabel->True,ContourShading->style2d[[1]],ContourStyle->style2d[[2]],opts,InterpolationOrder->intord(*,Epilog->Inset[Graphics[{Black,Rectangle[]}],posc,Center,Scaled[.03]]*),Axes->False,
-		PlotRange->{{xminp,xmaxp},{yminp,ymaxp}},FrameTicks->{{custTicksY[[i-1]],None},{custTicksX[[j]],None}},PlotRangePadding->None,
-		Evaluate@Which[
-			i==pardimtri&&j>1,seq[FrameLabel->{{None,None},{parnamesx[[j]],None}},ImagePadding->{{padnolabely,padnonumbers},{padlabelx,padnonumbers}},ImageSize->{framesize+padnolabely+padnonumbers,framesize+padlabelx+padnonumbers}],
-			i==pardimtri&&j==1,seq[FrameLabel->{{parnamesx[[i]],None},{parnamesx[[j]],None}},ImagePadding->{{padlabely,padnonumbers},{padlabelx,padnonumbers}},ImageSize->{framesize+padlabely+padnonumbers,framesize+padlabelx+padnonumbers}],
-			i>1&&j==1,seq[FrameLabel->{{parnamesx[[i]],None},{None,None}},ImagePadding->{{padlabely,padnonumbers},{padnolabelx,padnonumbers}},ImageSize->{framesize+padlabely+padnonumbers,framesize+padnolabelx+padnonumbers}],
-			i>j,seq[FrameLabel->{None,None},ImagePadding->{{padnolabely,padnonumbers},{padnolabelx,padnonumbers}},ImageSize->{framesize+padnolabely+padnonumbers,framesize+padnolabelx+padnonumbers}]
-			]];
+		(
 		potrix[tlabel,i,j]
-	)
+		)
 }],
 Spacings->{0,0}(*,Dividers\[Rule]All*)(*,ImageSize\[Rule]1000*)]
 ]
