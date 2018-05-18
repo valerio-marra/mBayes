@@ -4,7 +4,7 @@
 
 maxXtab=Sort[LTabx,#1[[2]]>#2[[2]]&][[1,1]];
 epsmax=0.05;
-maxP=FindMaximum[Likel[x],{x,(xMin+xMax+10 maxXtab)/12,Max[{xMin,maxXtab (1-Sign[maxXtab]epsmax)}],Min[{xMax,maxXtab (1+Sign[maxXtab]epsmax)}]},AccuracyGoal->accugoal];
+maxP=FindMaximum[Likel[x],{x,(xMin+xMax+100 maxXtab)/102,Max[{xMin,maxXtab (1-Sign[maxXtab]epsmax)}],Min[{xMax,maxXtab (1+Sign[maxXtab]epsmax)}]},AccuracyGoal->accugoal];
 {maxX,maxY}={x/.maxP[[2]],maxP[[1]]};
 
 
