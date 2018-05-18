@@ -42,6 +42,7 @@ If using the provided JLA catalog, please cite [Betoule et al 2014](https://arxi
 ### Known issues
 
 Mathematica 11.3 is much less forgiving than previous versions. When using Mathematica 11.3 the marginalization routines may give some (inconsequential, most of the times) errors.
+When computing numerically the Fisher matrix, it may be necessary to adjust the scaleNH parameter of the NHessian function. A more robust NHessian function will be available soon.
 
 
 ### Acknowledgements
