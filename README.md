@@ -13,6 +13,7 @@ At the moment, the following features are implemented:
 * multivariate and flat priors
 * variables can be easily fixed without editing the glue code
 * Fisher matrix approximation for likelihood and posterior
+* Mathematica experimental Hessian
 * Fisher and fast numerical evidence
 * grid optimization with Fisher
 * optimized parallel computation and exportation 
@@ -42,7 +43,6 @@ If using the provided JLA catalog, please cite [Betoule et al 2014](https://arxi
 ### Known issues
 
 Mathematica 11.3 is much less forgiving than previous versions. When using Mathematica 11.3 the marginalization routines may give some (inconsequential, most of the times) errors.
-When computing numerically the Fisher matrix, it may be necessary to adjust the scaleNH parameter of the NHessian function. A more robust NHessian function will be available soon.
 
 
 ### Acknowledgements
