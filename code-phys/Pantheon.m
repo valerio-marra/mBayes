@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* importing JLA binned data *)
+(* importing Pantheon binned data *)
 
 (* data vector *)
 datajlaBin=Import["cats/Pantheon/hlsp_ps1cosmo_panstarrs_gpc1_all_model_v1_lcparam.txt","Table","HeaderLines"->1];
