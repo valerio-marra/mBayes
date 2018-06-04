@@ -18,14 +18,15 @@ With[
 	{
 	{i_,i_}:>
 		(
-		unionrangex=MinMax@@IntervalUnion@@(Interval@AbsoluteOptions[potrix[#,i,i],PlotRange][[1,2,1]]&/@tlabvec);
-		unionrangey=MinMax@@IntervalUnion@@(Interval@AbsoluteOptions[potrix[#,i,i],PlotRange][[1,2,2]]&/@tlabvec);
-		Show[Sequence[potrix[#,i,i]&/@tlabvec],PlotRange->{unionrangex,unionrangey}]
+		unionrangex=MinMax@Flatten[AbsoluteOptions[potrix[#,i,i],PlotRange][[1,2,1]]&/@tlabvec];
+		(*Print[{parnames[[i]],unionrangex}];*)
+		Show[Sequence[potrix[#,i,i]&/@tlabvec],PlotRange->{unionrangex,All}]
 		),
 	{i_,j_}/;i>j:>
 	(
-		unionrangex=MinMax@@IntervalUnion@@(Interval@AbsoluteOptions[potrix[#,i,j],PlotRange][[1,2,1]]&/@tlabvec);
-		unionrangey=MinMax@@IntervalUnion@@(Interval@AbsoluteOptions[potrix[#,i,j],PlotRange][[1,2,2]]&/@tlabvec);
+		unionrangex=MinMax@Flatten[AbsoluteOptions[potrix[#,i,j],PlotRange][[1,2,1]]&/@tlabvec];
+		unionrangey=MinMax@Flatten[AbsoluteOptions[potrix[#,i,j],PlotRange][[1,2,2]]&/@tlabvec];
+		(*Print[{{parnames[[i]],parnames[[j]]},{unionrangex,unionrangey}}];*)
 		Show[Sequence[potrix[#,i,j]&/@tlabvec],PlotRange->{unionrangex,unionrangey}]
 	)
 }],
