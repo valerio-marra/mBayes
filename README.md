@@ -37,8 +37,11 @@ I will put asap a video for a quick overview of **mBayes**' functionalities and 
 ### Credits
 
 You can use mBayes, or part of it, freely, provided that in your publications you acknowledge its use and cite the paper Camarena & Marra [arXiv:1805.09900](https://arxiv.org/abs/1805.09900). If you modify parts of mBayes, you may append to the credit line the following text:
+
 *This code is released under the GPL license. Copyright by Valerio Marra (valerio.marra@me.com)*
+
 ***This code has been modified by XXX (xxx@yyy.zzz).***
+
 If using the provided JLA and Pantheon catalogs, please cite [Betoule et al 2014](https://arxiv.org/abs/1401.4064) and [Scolnic et al 2018](https://arxiv.org/abs/1710.00845), respectively.
 
 
