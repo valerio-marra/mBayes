@@ -7,6 +7,8 @@ If dealing with high-dimensional degenerate posteriors please consider tools suc
 Have fun,
 [Valerio](http://inspirehep.net/author/profile/V.Marra.1)
 
+<div style="text-align: right"> your-text-here </div>
+
 ### Features
 
 At the moment, the following features are implemented:
