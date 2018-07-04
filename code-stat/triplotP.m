@@ -9,7 +9,7 @@ If[i==j,
 	plot1d[chi2Tab,parnamesx[[plotname]],1];
 	Get["code-stat/c-levels.m"];
 	clev;
-	potrix[tlabel,i,i]=Plot[Likel[x],{x,xminp,xmaxp},AspectRatio->arato,Frame->True(*,PlotRange->Full*),FrameStyle->textsize2,ImageMargins->0,Axes->False,Filling->style1d[[1]],PlotStyle->style1d[[2]],PlotRange->{{xminp,xmaxp},All},PlotRangePadding->None,
+	potrix[tlabel,i,i]=Plot[Likel[x],{x,xminp,xmaxp},AspectRatio->arato,Frame->True(*,PlotRange->Full*),FrameStyle->textsize2,ImageMargins->0,Axes->False,Filling->style1d[[1]],PlotStyle->style1d[[2]],PlotRange->{{xminp,xmaxp},{0,All}},PlotRangePadding->None,
 	FrameTicks->{{None,None},{custTicksX[[i]],None}},
 			Evaluate@Which[
 			i==1,seq[FrameLabel->{{nada,None},{None,None}},ImagePadding->{{padlabely,padnonumbers},{padnolabelx,padnonumbers}},ImageSize->{framesize+padlabely+padnonumbers,framesize+padnolabelx+padnonumbers}],
