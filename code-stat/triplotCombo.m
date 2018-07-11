@@ -18,7 +18,7 @@ With[
 	{
 	{i_,i_}:>
 		(
-		unionrangex=MinMax@Flatten[AbsoluteOptions[potrix[#,i,i],PlotRange][[1,2,1]]&/@tlabvec];
+		unionrangex=MinMax@Flatten[(*Absolute*)Options[potrix[#,i,i],PlotRange][[1,2,1]]&/@tlabvec];
 		(*Print[{parnames[[i]],unionrangex}];*)
 		Show[Sequence[potrix[#,i,i]&/@tlabvec],PlotRange->{unionrangex,All}]
 		),
