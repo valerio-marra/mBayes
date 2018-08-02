@@ -1,4 +1,9 @@
-# **mBayes**[<img align="right" src="https://img.shields.io/badge/license-GPLv2-brightgreen.svg">](https://github.com/valerio-marra/mBayes/blob/master/LICENSE)
+[![GitHub (pre-)release](https://img.shields.io/github/release/valerio-marra/mBayes/all.svg)](https://github.com/valerio-marra/mBayes/releases)
+[![Github All Releases](https://img.shields.io/github/downloads/valerio-marra/mBayes/total.svg)](https://github.com/valerio-marra/mBayes/releases)
+[![license: GPLv2](https://img.shields.io/badge/license-GPLv2-brightgreen.svg)](https://github.com/valerio-marra/mBayes/blob/master/LICENSE)
+[![DOI](https://zenodo.org/badge/91839618.svg)](https://zenodo.org/badge/latestdoi/91839618)
+
+# **mBayes**
 ## Bayesian inference with Wolfram Mathematica
 
 **mBayes** aims at helping researchers to effortlessly carry out Bayesian inference within Wolfram Mathematica. Much of the workflow has been automatized. At the moment, **mBayes** explores the posterior on a grid. Grid exploration is particularly convenient if one needs to compute 3+ sigma intervals. This works reasonably well for posteriors up to 4-6 dimensions. If the posterior is close to a multivariate Gaussian distribution, then **mBayes** can save a lot of time by exploring only a suitable ellipsoid obtained via the Fisher matrix.
