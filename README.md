@@ -1,5 +1,4 @@
 [![GitHub (pre-)release](https://img.shields.io/github/release/valerio-marra/mBayes/all.svg)](https://github.com/valerio-marra/mBayes/releases)
-[![Github All Releases](https://img.shields.io/github/downloads/valerio-marra/mBayes/total.svg)](https://github.com/valerio-marra/mBayes/releases)
 [![license: GPLv2](https://img.shields.io/badge/license-GPLv2-brightgreen.svg)](https://github.com/valerio-marra/mBayes/blob/master/LICENSE)
 [![DOI](https://zenodo.org/badge/91839618.svg)](https://zenodo.org/badge/latestdoi/91839618)
 
