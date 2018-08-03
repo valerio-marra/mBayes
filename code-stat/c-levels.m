@@ -2,8 +2,8 @@
 
 (* chi2/L interpolation *)
 
-{xMin,xMax}={pSet[[plotname,1]],pSet[[plotname,2]]};
-(*{xMin,xMax}={Min[LTabx[[All,1]]],Max[LTabx[[All,1]]]};*)
+(*{xMin,xMax}={pSet[[plotname,1]],pSet[[plotname,2]]};*)
+{xMin,xMax}={Min[LTabx[[All,1]]],Max[LTabx[[All,1]]]};
 
 (* option to reduce noise *)
 (*If[plotname==If[Length[best[[2]]]==3,2,3],
@@ -16,10 +16,11 @@ chi2Tabx[[All,2]]=cfit[chi2Tabx[[All,1]]];
 
 Which[
 noisy==0
-	,
+,
 (* chi2 is naturallly locally parabolic and so InterpolationOrder\[Rule]2 should be ok *)
 chi2int=Interpolation[chi2Tabx,InterpolationOrder->chi2IO,Method->"Spline"];
-	,
+chi2Tabx[[All,2]]=chi2int[chi2Tabx[[All,1]]];
+,
 noisy==1
 ,
 (* low-pass filter *)
