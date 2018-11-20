@@ -24,6 +24,7 @@ At the moment, the following features are implemented:
 * confidence levels (actual and gaussian)
 * combinations of triangular plots
 * an mcmc sampler is not yet implemented; coming...
+* works seemlessly with [MAGMA](https://github.com/davi-rodrigues/MAGMA)
 
 ### Usage
 
