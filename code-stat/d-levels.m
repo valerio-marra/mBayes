@@ -12,7 +12,7 @@ LAuxInt=Total[parTabDiff LTabx[[All,2]],2]; (* normalization *)
 
 (* best-fit model from table *)
 
-pos=Position[chi2Tabx[[All,2]],0.][[1]];
+pos=Position[Chop[chi2Tabx[[All,2]]],0][[1]];
 xbf=chi2Tabx[[pos,1]][[1]];
 
 
