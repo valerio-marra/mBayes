@@ -5,9 +5,9 @@ tablex=TableForm[vecerror,TableHeadings->{{"1\[Sigma]","2\[Sigma]","3\[Sigma]","
 outvec=vecerror[[All,;;3]];
 
 (* summary plot *)
-plikex=Plot[Likel[x],{x,xminPlot,xmaxPlot},Frame->True,Axes->False,PlotStyle->{color1,Thick},FrameStyle->18,FrameLabel->{parnames[[plotname]],"L"},PlotRange->All,ImageSize->450,GridLines->Lgrids,GridLinesStyle->Directive[Black,Dashed]];
-pchi2x=Plot[chi2int[x],{x,xminPlot,xmaxPlot},Frame->True,Axes->False,PlotStyle->{color1,Thick},FrameStyle->18,FrameLabel->{parnames[[plotname]],"\[CapitalDelta]\!\(\*SuperscriptBox[\(\[Chi]\), \(2\)]\)=-2Log[L/\!\(\*SubscriptBox[\(L\), \(max\)]\)]"},PlotRange->All,ImageSize->450,GridLines->cgrids,GridLinesStyle->Directive[Black,Dashed]];
-plotx=GraphicsRow[{pchi2x,plikex},Spacings->0];
+plikex=Plot[Likel[x],{x,xminPlot,xmaxPlot},Frame->True,Axes->False,PlotStyle->{color1,Thick},FrameStyle->18,FrameLabel->{parnames[[plotname]],"L"},PlotRange->All,ImageSize->450,GridLines->Lgrids(*,GridLinesStyle->Directive[Black,Dashed]*)];
+pchi2x=Plot[chi2int[x],{x,xminPlot,xmaxPlot},Frame->True,Axes->False,PlotStyle->{color1,Thick},FrameStyle->18,FrameLabel->{parnames[[plotname]],"\[CapitalDelta]\!\(\*SuperscriptBox[\(\[Chi]\), \(2\)]\)=-2Log[L/\!\(\*SubscriptBox[\(L\), \(max\)]\)]"},PlotRange->All,ImageSize->450,GridLines->cgrids(*,GridLinesStyle->Directive[Black,Dashed]*)];
+plotx=GraphicsRow[{pchi2x,plikex},Spacings->0,ImageSize->1200];
 
 
 (* warning *)

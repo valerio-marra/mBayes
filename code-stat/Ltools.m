@@ -346,6 +346,14 @@ If[summary==1,Print[outable];];
 );
 
 
+boostres[tab_,points_,order_]:=
+(
+faux=Interpolation[tab,InterpolationOrder->order];
+{mi1,ma1}=MinMax[tab[[All,1]]];
+Table[{x,faux[x]},{x,mi1,ma1,(ma1-mi1)/(points-1)}]
+);
+
+
 (* 1d level routine *)
 clev:=
 If[isig!=0,
@@ -353,10 +361,22 @@ Which[
 method==1,Get["code-stat/d-levels.m"];, (* based on table for levels and based on FindRoot on chi2 for x determination *)
 method==2,Get["code-stat/e-levels.m"];(* based on FindRoot for levels and based on FindRoot on chi2 for x determination *)
 ];
-Lgrids={Join[{maxX},vecerror[[All,4]],vecerror[[All,5]]],Join[{maxY},maxY Exp[-vecerror[[All,7]]/2]]};
+
 Ltgrids={Flatten[vecerror[[All,{4,5}]]],maxY Exp[-vecerror[[All,7]]/2]};
-cgrids={Join[{maxX},vecerror[[All,4]],vecerror[[All,5]]],Join[{0},vecerror[[All,7]]]};
-{xminPlot,xmaxPlot}={vecerror[[-1,4]],vecerror[[-1,5]]};
+
+xgrids=Join[{maxX},vecerror[[All,4]],vecerror[[All,5]]];
+Lygrids=Join[{maxY},maxY Exp[-vecerror[[All,7]]/2]];
+cygrids=Join[{0},vecerror[[All,7]]];
+
+gridcolor=Table[Blend[{Blue,Red},x],{x,0,1,If[Abs[isig]==1,2,1/(Abs[isig]-1)]}];
+xgrids=Join[{{maxX,Black}},Partition[Riffle[vecerror[[All,4]],gridcolor],2],Partition[Riffle[vecerror[[All,5]],gridcolor],2]];
+Lygrids=Join[{{maxY,Black}},Partition[Riffle[maxY Exp[-vecerror[[All,7]]/2],gridcolor],2]];
+cygrids=Join[{{0,Black}},Partition[Riffle[vecerror[[All,7]],gridcolor],2]];
+
+Lgrids={xgrids,Lygrids};
+cgrids={xgrids,cygrids};
+
+{xminPlot,xmaxPlot}={Min[vecerror[[All,4]]],Max[vecerror[[All,5]]]};
 ,
 vecerror={};
 Lgrids=None;
@@ -369,6 +389,7 @@ cgrids=None;
 plot1d[chi2Tabtemp_,parname_,intord_]:=
 (
 chi2Tab=chi2Tabtemp;
+If[boost>0,chi2Tab=boostres[chi2Tab,bpoints,boost]];
 minchi2ma=Min[chi2Tab[[All,2]]];
 chi2Tabx=chi2Tab;chi2Tabx[[All,2]]=chi2Tabx[[All,2]]-minchi2ma;
 pchisq=ListPlot[chi2Tabx,Frame->True,Axes->False,Joined->True,PlotStyle->{color1,Thick},InterpolationOrder->intord,FrameStyle->15,FrameLabel->{parname,"-2Log L/\!\(\*SubscriptBox[\(L\), \(max\)]\)"},GridLines->{None,gausigmas[[;;3]]},PlotRange->{Full,{-.05,11}}];

@@ -1,0 +1,4532 @@
+(************** Content-type: application/mathematica **************
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     86914,       2499]*)
+(*NotebookOutlinePosition[    125612,       3823]*)
+(*  CellTagsIndexPosition[    125356,       3812]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[TextData[{
+  "The RootSearch Package\n",
+  StyleBox["By Ted Ersek",
+    FontSize->12],
+  "\n",
+  StyleBox["     ",
+    FontSize->12],
+  StyleBox[" ",
+    FontSize->12],
+  StyleBox[ButtonBox["ted.ersek@navy.navy.mil",
+    ButtonData:>{
+      URL[ "mailto:ted.ersek@navy.navy.mil"], None},
+    ButtonStyle->"Hyperlink"],
+    FontSize->12]
+}], "Title",
+  Background->RGBColor[1, 0.975998, 0.949996]],
+
+Cell[CellGroupData[{
+
+Cell["Version History", "Section"],
+
+Cell[CellGroupData[{
+
+Cell["Version 1.0", "Subsection"],
+
+Cell[TextData[{
+  "Version 1.0 of RootSource was posted on ",
+  StyleBox["MathSource",
+    FontSlant->"Italic"],
+  " in September of 2001."
+}], "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Version 1.1", "Subsection"],
+
+Cell["\<\
+In March of 2002 RootSearch was updated to correct minor bugs.  \
+Unfortunately I don't recall what the bugs were.\
+\>", "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Version 1.2", "Subsection"],
+
+Cell[TextData[{
+  "In April 2003 RootSearch was updated to use more robust programming idioms \
+and the current version is 1% to 2% faster than previous versions.  Also with \
+previous versions the next cell would indicate that Sin[x] has a root at \
+machine number 0.0 when an arbitrary precision root is expected.  With \
+version 1.2 of RootSearch we are told Sin[x] has a root at  ",
+  Cell[BoxData[
+      \(TraditionalForm\`0. \[Cross]10\^\(-71\)\)]],
+  " which is an arbitrary precision number in the interval  ",
+  Cell[BoxData[
+      \(TraditionalForm\`\((\(-10\^\(-70\)\), 10\^\(-70\))\)\)]],
+  "."
+}], "Text"],
+
+Cell[BoxData[{
+    \(\(Needs["\<Enhancements`RootSearch`\>"];\)\), "\n", 
+    \(RootSearch[Sin[x] \[Equal] 0, {x, \(-2\), 6}, 
+      PrecisionGoal \[Rule] 70]\)}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Version 1.3", "Subsection"],
+
+Cell[TextData[{
+  "In July 2005 version 1.3 was posted on ",
+  StyleBox["MathSource",
+    FontSlant->"Italic"],
+  ".  \n\nThe GoldenSecant method was rewritten to make it simpler and more \
+efficient.\n\nHandling of arbitrary precision was greatly implroved.\n\n\
+Support for RootSearchSamples was added.  \n\nDiscussion was added in this \
+notebook to explain how the RootSearch algorithm works.\n\nAn extensive list \
+of references on the subject is provided."
+}], "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Version 1.4", "Subsection"],
+
+Cell[TextData[{
+  "In April 2006 version 1.4 was posted on ",
+  StyleBox["MathSource",
+    FontSlant->"Italic"],
+  ".\n\nWhen a package is automatically created from a notebook with all the \
+code for this package a formatting glitch occurs. This glitch caused an \
+incorrect setting for the RootTest option when the package is loaded using a \
+Mac.  The package created was manually edited to correct the glitch.\n\nEach \
+time RootSearch is called it derives a function u[x] which has only simple \
+roots provided the functions involved have continuous derivatives. RootSearch \
+now derives a more efficient u[x]."
+}], "Text"]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Installing and Loading the Package", "Section"],
+
+Cell["\<\
+To determine where to put the (RootSearch.m) file evaluate the next \
+cell.  If this directory doesn't already have a directory called (Ersek) add \
+one now.  The (RootSearch.m) file should then be copied to this (Ersek) \
+directory.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(If[$VersionNumber < 
+        5, \[IndentingNewLine]ToFileName[{$TopDirectory, "\<AddOns\>", \
+"\<ExtraPackages\>"}], \[IndentingNewLine]ToFileName[{$UserBaseDirectory, \
+"\<Applications\>"}]\[IndentingNewLine]]\)], "Input"],
+
+Cell[BoxData[
+    \("C:\\Program Files\\Wolfram \
+Research\\Mathematica\\4.0\\AddOns\\ExtraPackages\\"\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Once the (RootSearch.m) file is copied to the right directory the \
+package can be loaded by evaluating the Needs statement in the next \
+cell.\
+\>", "Text",
+  CellTags->"Instalation"],
+
+Cell[BoxData[
+    \(Needs["\<Ersek`RootSearch`\>"]\)], "Input"],
+
+Cell["The next input displays the RootSearch usage message.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(?RootSearch\)\)], "Input"],
+
+Cell[BoxData[
+    \("RootSearch[lhs==rhs,{x,xmin,xmax}] tries to find all numerical \
+solutions to the equation (lhs==rhs) with values of x between xmin and xmax."\
+\)], "Print"]
+}, Open  ]],
+
+Cell[TextData[{
+  "The current version of RootSearch will only find roots of a single \
+equation with one real variable.  The algorithm is very robust as I \
+demonstrate with the examples that follow.  Also the algorithm is designed to \
+give the best possible approximation to each root.  So for example, when \
+machine precision is used you should find that the error in the location of \
+each root is less than 1 Ulp (the distance between machine numbers).\n\nIt \
+would be nice if RootSearch could find roots of f[z], f[x,y], and f[x,y,z] if \
+given a region to search.  Several root finding algorithms that could be \
+helpful here can be found in sections 9.6 and 9.7 of Numerical Recipes in C \
+",
+  ButtonBox["[Press, Teukolsky, Vetterling, Flannery 1994]",
+    ButtonData:>"Numerical Recipes",
+    ButtonStyle->"Hyperlink"],
+  ".  However, I haven't found a discussion of such algorithms that I can \
+understand without assistance.  Please contact me if you would like to help \
+me with this subject. "
+}], "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Examples", "Section"],
+
+Cell[CellGroupData[{
+
+Cell["Example 1", "Subsection"],
+
+Cell["\<\
+In the first example RootSearch finds all 21 roots of a \
+transcendental equation.\
+\>", "Text"],
+
+Cell[BoxData[{
+    \(\(f1[x_] := Sin[4\ x] - \(x + 1\)\/8;\)\), "\[IndentingNewLine]", 
+    \(\(Plot[f1[x], {x, \(-13\), 12}];\)\)}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = RootSearch[f1[x] \[Equal] 0, {x, \(-13\), 12}]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(-8.348289378299722`\)}, {x \[Rule] \
+\(-8.128931534118271`\)}, {x \[Rule] \(-6.862951194089526`\)}, {x \[Rule] \
+\(-6.471470625613025`\)}, {x \[Rule] \(-5.353916539697934`\)}, {x \[Rule] \
+\(-4.837462268522024`\)}, {x \[Rule] \(-3.8363831890811366`\)}, {x \[Rule] \
+\(-3.2116177756546436`\)}, {x \[Rule] \(-2.3149160596763254`\)}, {x \[Rule] \
+\(-1.5892263387762744`\)}, {x \[Rule] \(-0.7919019607177706`\)}, {x \[Rule] 
+          0.032351189053103635`}, {x \[Rule] 0.730877103530479`}, {x \[Rule] 
+          1.6553816023295524`}, {x \[Rule] 2.251554720739636`}, {x \[Rule] 
+          3.2828240626757283`}, {x \[Rule] 3.767387062972021`}, {x \[Rule] 
+          4.92068856358791`}, {x \[Rule] 5.272491509475395`}, {x \[Rule] 
+          6.596105432790534`}, {x \[Rule] 6.7398184613474434`}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Length[%]\)], "Input"],
+
+Cell[BoxData[
+    \(21\)], "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Example 2", "Subsection"],
+
+Cell[TextData[{
+  "In the second example RootSearch finds two roots. In this case none of the \
+traditional root finding methods such as Secant method or Newton's method \
+will converge on the root at 1.49999,  but RootSearch has no problem. I \
+developed a method I call ",
+  ButtonBox["GoldenSecant",
+    ButtonData:>"Golden-Secant",
+    ButtonStyle->"Hyperlink"],
+  " to ensure convergence in a case such as this."
+}], "Text"],
+
+Cell[BoxData[{
+    \(f2[x_] := 
+      If[x < 3/2, \@\(3/2 - x\) - Exp[\(-4\)\ x], 
+        2*\ x\ Exp[\(-x\)]]\), "\n", 
+    \(\(Plot[\ f2[x], {x, \(-0.10\), 4}, PlotPoints \[Rule] 500];\)\), "\n", 
+    \(\(Plot[f2[x], {x, 1.4999, 1.5}, PlotRange \[Rule] All, 
+        Frame \[Rule] True];\)\)}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = RootSearch[f2[x] \[Equal] 0, {x, \(-25\), 25}]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(-0.0552005647310447`\)}, {x \[Rule] 
+          1.4999938554856136`}}\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Next we see that f2[x] evaluates to 0.0 at one root and a fairly \
+small value at the other root.  I think you will find that no other machine \
+number near 1.49999 will give a smaller value for Abs[f2[x]].\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(f2[x] /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({0.`, 9.468554412750407`*^-15}\)], "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Example 3", "Subsection"],
+
+Cell["\<\
+Traditional root finding methods converge slowly at multiple roots. \
+ RootSearch uses a little know fact that if derivatives of f[x] exist at and \
+near a root (x=x0) then u[x] defined below has a simple root at (x=x0).  \
+Since that is the case RootSearch will look for roots of u[x] and f[x] if \
+f[x] can be differentiated symbolically.\
+\>", "Text"],
+
+Cell[BoxData[
+    \(u[x_] := If[f[x] \[Equal] 0, \ 0, \ f[x]\/\(f'\)[x]]\)], "Input",
+  Evaluatable->False],
+
+Cell["\<\
+The next input shows that Exp[x-\[Pi]]-(1-\[Pi]+x) has a double \
+root at (x=\[Pi]).\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Series[Exp[x - \[Pi]] - \((1 - \[Pi] + x)\), {x, \[Pi], 4}]\)], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[
+      RowBox[{\(1\/2\ \((x - \[Pi])\)\^2\), "+", \(1\/6\ \((x - \[Pi])\)\^3\),
+         "+", \(1\/24\ \((x - \[Pi])\)\^4\), "+", 
+        InterpretationBox[\(O[x - \[Pi]]\^5\),
+          SeriesData[ x, Pi, {}, 2, 5, 1]]}],
+      SeriesData[ x, Pi, {
+        Rational[ 1, 2], 
+        Rational[ 1, 6], 
+        Rational[ 1, 24]}, 2, 5, 1]]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+In the next example RootSearch quickly converges on the double \
+root.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = 
+      RootSearch[
+        Exp[x - \[Pi]] \[Equal] 1 - \[Pi] + x, {x, \(-3\), 4}]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] 3.141592678814519`}}\)], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "The equation whose root we 'found' has a double root at (x=\[Pi]). \
+However,the next input shows that the alleged root is about ",
+  Cell[BoxData[
+      \(TraditionalForm\`2.5\[Cross]10\^\(-8\)\)]],
+  "from \[Pi], but the distance between machine numbers in that region is \
+about ",
+  Cell[BoxData[
+      \(TraditionalForm\`4.4\[Cross]10\^\(-16\)\)]],
+  "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\[Pi] - x /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({\(-2.5224725863637332`*^-8\)}\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+It turns out the RootSearch algorithm performed as advertised \
+because (Exp[x-\[Pi]]-(1-\[Pi]+x)) evaluates to 0.0 at the alleged root.  In \
+fact there are lots of machine numbers near \[Pi] that solve this equation \
+equally well. Later I demonstrate how RootSearch can get much closer to the \
+true root of this equation.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\((Exp[x - \[Pi]] - \((1 - \[Pi] + x)\)\ \ )\) /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({0.`}\)], "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Example 4", "Subsection"],
+
+Cell["\<\
+Next I give an example that demonstrates how hard RootSearch looks \
+for roots.\
+\>", "Text"],
+
+Cell[BoxData[{
+    \(\(ClearAll[f4];\)\), "\[IndentingNewLine]", 
+    \(\(f4[x_] := \((1.5 - Erf[x] - Erf[2 - x])\) 
+          Exp[\(-Abs[x - 1]\)];\)\), "\[IndentingNewLine]", 
+    \(\(Plot[f4[x], {x, \(-8\), 12}, PlotRange \[Rule] All];\)\)}], "Input"],
+
+Cell[TextData[{
+  "In the next cell I ask FindRoot to search a range that is much larger than \
+the range plotted above and it finds both roots.  Also notice f4[x] is very \
+small at beginning and end of the search interval, but RootSearch doesn't \
+claim that f4[x] has roots at either end. RootSearch will indicate that an \
+endpoint of the search interval is a root ",
+  StyleBox["if and only if",
+    FontWeight->"Bold"],
+  " (lhs-rhs \[Equal] 0) at an endpoint."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = RootSearch[f4[x] \[Equal] 0, {x, \(-400\), 200}]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] 0.5178907607442612`}, {x \[Rule] 
+          1.482109239255739`}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(f4[x] /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({0.`, 0.`}\)], "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Example 5", "Subsection"],
+
+Cell["\<\
+Next I give an example where RootSearch needs to look at lots of \
+places that might contain a root.\
+\>", "Text"],
+
+Cell[BoxData[{
+    \(\(ClearAll[f5];\)\), "\[IndentingNewLine]", 
+    \(\(f5[x_] := 
+        3.2 - 3*Cos[x] - Exp[\(-\((x - 8  \[Pi])\)^2\)] - 
+          Exp[\(-\((x - 14  \[Pi])\)^2\)];\)\), "\[IndentingNewLine]", 
+    \(\(Plot[f5[x], {x, 0, 30  \[Pi]}];\)\)}], "Input"],
+
+Cell["In the next cell RootSearch finds all four roots of f5[x].", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = RootSearch[f5[x] \[Equal] 0, {x, 0, 30\ \[Pi]}]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] 24.543200825536683`}, {x \[Rule] 
+          25.722281631900007`}, {x \[Rule] 43.392756747075445`}, {x \[Rule] 
+          44.57183755343877`}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(f5[x] /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({0.`, \(-3.1086244689504383`*^-15\), \(-7.549516567451064`*^-15\), 
+      4.884981308350689`*^-15}\)], "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Example 6", "Subsection"],
+
+Cell[TextData[{
+  "RootSearch can find the roots of complex valued functions, and it doesn't \
+even care if the function is undefined at some places in the interval being \
+searched. This is demonstrated with the next example where f6[x] is complex \
+for  ",
+  Cell[BoxData[
+      \(TraditionalForm\`\((\(-1.2\) < x < 1.2)\)\)]],
+  " and is undefined for ",
+  Cell[BoxData[
+      \(TraditionalForm\`x > 1.4\)]],
+  "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(ClearAll[f6];\)\), "\[IndentingNewLine]", 
+    \(\(f6[x_] /; 
+          x < 1.4 := \ \@\(Abs[x] - 1.2\)\ ;\)\), "\[IndentingNewLine]", 
+    \(RootSearch[f6[x] \[Equal] 0, {x, \(-8\), 8}, 
+      RootTest \[Rule] \((#2 < 10^\(-6\) &)\)]\)}], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(-1.2`\)}, {x \[Rule] 1.2`}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = 
+      RootSearch[f6[x] \[Equal] 0, {x, \(-8\), 8}, 
+        PrecisionGoal \[Rule] 25]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(-1.19999999999999996563831960326545769453`25\)}, {x \
+\[Rule] 1.19999999999999989397718289443359237155`25}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(f6[x] /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({0.`, 0.`}\)], "Output"]
+}, Open  ]],
+
+Cell[BoxData[{
+    \(\(Plot[f6[x], {x, \(-8\), \(-1.2\)}];\)\), "\n", 
+    \(\(Plot[f6[x], {x, 1.2, 1.4}];\)\)}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Example 7", "Subsection"],
+
+Cell[TextData[{
+  "The Riemann Hypothesis is a famous unsolved problem that has to do with \
+the roots of Zeta[1/2 + I y].  You can read about this problem at \n     ",
+  ButtonBox["http://mathworld.wolfram.com/RiemannHypothesis.html",
+    ButtonData:>{
+      URL[ "http://mathworld.wolfram.com/RiemannHypothesis.html"], None},
+    ButtonStyle->"Hyperlink"],
+  "\nThe next cell makes a plot of  Abs[ Zeta[1/2 + y I] ].  You need to \
+scroll to the right to see the whole graphic."
+}], "Text"],
+
+Cell[BoxData[
+    \(\(Plot[
+        Abs[Zeta[1/2 + y\ \[ImaginaryI]]], {y, 0, 
+          237}, \[IndentingNewLine]ImageSize \[Rule] {2000, 200}, 
+        AspectRatio \[Rule] 1/12, PlotPoints \[Rule] 600];\)\)], "Input"],
+
+Cell["\<\
+In the next cell RootSearch finds the first 100 roots of  \
+Abs[Zeta[1/2 + y I]].  Notice Zeta[_] evaluates to complex numbers in this \
+example, but RootSearch still finds the roots without problems.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(RootSearch[Zeta[1/2 + \[ImaginaryI]\ y] \[Equal] 0, {y, 0, 237}, 
+      InitialSamples \[Rule] 700]\)], "Input"],
+
+Cell[BoxData[
+    \({{y \[Rule] 14.134725141734693`}, {y \[Rule] 
+          21.022039638771552`}, {y \[Rule] 25.010857580145693`}, {y \[Rule] 
+          30.424876125859512`}, {y \[Rule] 32.93506158773919`}, {y \[Rule] 
+          37.586178158825675`}, {y \[Rule] 40.9187190121475`}, {y \[Rule] 
+          43.327073280914995`}, {y \[Rule] 48.005150881167154`}, {y \[Rule] 
+          49.77383247767231`}, {y \[Rule] 52.97032147771446`}, {y \[Rule] 
+          56.44624769706339`}, {y \[Rule] 59.347044002602345`}, {y \[Rule] 
+          60.83177852460982`}, {y \[Rule] 65.11254404808162`}, {y \[Rule] 
+          67.07981052949418`}, {y \[Rule] 69.54640171117397`}, {y \[Rule] 
+          72.06715767448189`}, {y \[Rule] 75.70469069908393`}, {y \[Rule] 
+          77.1448400688748`}, {y \[Rule] 79.33737502024938`}, {y \[Rule] 
+          82.91038085408603`}, {y \[Rule] 84.73549298051705`}, {y \[Rule] 
+          87.42527461312524`}, {y \[Rule] 88.80911120763447`}, {y \[Rule] 
+          92.49189927055849`}, {y \[Rule] 94.65134404051989`}, {y \[Rule] 
+          95.8706342282453`}, {y \[Rule] 98.8311942181937`}, {y \[Rule] 
+          101.3178510057314`}, {y \[Rule] 103.72553804047834`}, {y \[Rule] 
+          105.4466230523261`}, {y \[Rule] 107.1686111842764`}, {y \[Rule] 
+          111.0295355431697`}, {y \[Rule] 111.87465917699265`}, {y \[Rule] 
+          114.32022091545271`}, {y \[Rule] 116.22668032085757`}, {y \[Rule] 
+          118.79078286597621`}, {y \[Rule] 121.37012500242065`}, {y \[Rule] 
+          122.94682929355258`}, {y \[Rule] 124.25681855434577`}, {y \[Rule] 
+          127.51668387959648`}, {y \[Rule] 129.57870419995606`}, {y \[Rule] 
+          131.0876885309327`}, {y \[Rule] 133.4977372029976`}, {y \[Rule] 
+          134.75650975337388`}, {y \[Rule] 138.11604205453344`}, {y \[Rule] 
+          139.7362089521214`}, {y \[Rule] 141.1237074040211`}, {y \[Rule] 
+          143.11184580762063`}, {y \[Rule] 146.00098248676554`}, {y \[Rule] 
+          147.4227653425596`}, {y \[Rule] 150.05352042078488`}, {y \[Rule] 
+          150.92525761224144`}, {y \[Rule] 153.0246938111989`}, {y \[Rule] 
+          156.11290929423785`}, {y \[Rule] 157.59759181759404`}, {y \[Rule] 
+          158.8499881714205`}, {y \[Rule] 161.18896413759603`}, {y \[Rule] 
+          163.030709687182`}, {y \[Rule] 165.53706918790044`}, {y \[Rule] 
+          167.1844399781745`}, {y \[Rule] 169.09451541556888`}, {y \[Rule] 
+          169.91197647941172`}, {y \[Rule] 173.41153651959152`}, {y \[Rule] 
+          174.75419152336573`}, {y \[Rule] 176.44143429771043`}, {y \[Rule] 
+          178.37740777609997`}, {y \[Rule] 179.916484020257`}, {y \[Rule] 
+          182.20707848436646`}, {y \[Rule] 184.87446784838744`}, {y \[Rule] 
+          185.5987836777075`}, {y \[Rule] 187.22892258350183`}, {y \[Rule] 
+          189.41615865601693`}, {y \[Rule] 192.02665636071376`}, {y \[Rule] 
+          193.07972660384573`}, {y \[Rule] 195.26539667952923`}, {y \[Rule] 
+          196.87648184095832`}, {y \[Rule] 198.01530967625192`}, {y \[Rule] 
+          201.2647519437038`}, {y \[Rule] 202.49359451414048`}, {y \[Rule] 
+          204.18967180310455`}, {y \[Rule] 205.39469720216331`}, {y \[Rule] 
+          207.90625888780622`}, {y \[Rule] 209.57650971685626`}, {y \[Rule] 
+          211.6908625953653`}, {y \[Rule] 213.34791935971268`}, {y \[Rule] 
+          214.54704478349143`}, {y \[Rule] 216.16953850826368`}, {y \[Rule] 
+          219.0675963490214`}, {y \[Rule] 220.7149188393141`}, {y \[Rule] 
+          221.43070555469333`}, {y \[Rule] 224.0070002546043`}, {y \[Rule] 
+          224.98332466958232`}, {y \[Rule] 227.42144427967932`}, {y \[Rule] 
+          229.33741330552536`}, {y \[Rule] 231.25018870049905`}, {y \[Rule] 
+          231.98723525318027`}, {y \[Rule] 233.69340417890834`}, {y \[Rule] 
+          236.5242296658162`}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Length[%]\)], "Input"],
+
+Cell[BoxData[
+    \(100\)], "Output"]
+}, Open  ]]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["RootSearchSamples", "Section"],
+
+Cell["The usage message for RootSearchSamples is shown below.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(?RootSearchSamples\)\)], "Input"],
+
+Cell[BoxData[
+    \("RootSearchSamples returns a list of points where the equation given to \
+RootSearch was sampled during the last use of RootSearch. If \
+RootSearch[lhs==rhs,{x,xmin,xmax}] was evaluated. Then RootSearchSamples \
+returns {{x1,y1},{x2,y2}, ...} where yn is the value of (lhs-rhs) at x=xn.  \
+Points where (lhs-rhs) did not evaluate to a numeric value are not included \
+in the list returned."\)], "Print"]
+}, Open  ]],
+
+Cell["\<\
+RootSearchSamples is useful for monitoring how well RootSearch \
+converges on roots. An example is given below where only 19 samples are \
+needed to find two roots.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(ClearAll[f4];\)\), "\n", 
+    \(\(f4[x_] := \((1.5 - Erf[x] - Erf[2 - x])\) 
+          Exp[\(-Abs[x - 1]\)];\)\), "\n", 
+    \(RootSearch[f4[x] \[Equal] 0, {x, \(-2\), 5}, 
+      InitialSamples \[Rule] 4]\)}], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] 0.5178907607442613`}, {x \[Rule] 
+          1.482109239255739`}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(RootSearchSamples // TableForm\)], "Input"],
+
+Cell[BoxData[
+    TagBox[GridBox[{
+          {\(-2.`\), "0.07444771260806782`"},
+          {"0.`", "0.18566056311649695`"},
+          {"0.3769905817031748`", "0.062026356261827925`"},
+          {"0.5164781980952233`", "0.0006431180228000083`"},
+          {"0.5178835304463828`", "3.292504673595984`*^-6"},
+          {"0.5178907607442609`", "2.056620224348146`*^-16"},
+          {"0.5178907607442613`", "0.`"},
+          {"0.517890761126014`", \(-1.7384124029598224`*^-10\)},
+          {"0.5661239350279694`", \(-0.022076111453626`\)},
+          {"0.7532540119511835`", \(-0.10576986624416668`\)},
+          {"1.2612065708962232`", \(-0.09965669932188931`\)},
+          {"1.4819152629230996`", \(-0.00008833470070919059`\)},
+          {"1.482109239255739`", "0.`"},
+          {"1.4821092392598716`", "1.881944613285733`*^-12"},
+          {"1.4821093895543134`", "6.844244377966415`*^-8"},
+          {"1.4874256244630302`", "0.0024190808681179496`"},
+          {"1.6901991607944375`", "0.08932820212090369`"},
+          {"2.6271443096376914`", "0.22106660641501558`"},
+          {"5.`", "0.02747305373156353`"}
+          },
+        RowSpacings->1,
+        ColumnSpacings->3,
+        RowAlignments->Baseline,
+        ColumnAlignments->{Left}],
+      (TableForm[ #]&)]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(RootSearchSamples // Length\)], "Input"],
+
+Cell[BoxData[
+    \(19\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+It also allows you use you own judgement to see if there may be \
+additional roots that were not returned.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(ClearAll[f5];\)\), "\n", 
+    \(\(f5[x_] := 
+        3.2 - 3*Cos[x] - Exp[\(-\((x - 8  \[Pi])\)^2\)] - 
+          Exp[\(-\((x - 14  \[Pi])\)^2\)];\)\), "\n", 
+    \(RootSearch[f5[x] \[Equal] 0, {x, 0, 30\ \[Pi]}]\)}], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] 24.543200825536683`}, {x \[Rule] 
+          25.722281631900007`}, {x \[Rule] 43.392756747075445`}, {x \[Rule] 
+          44.57183755343877`}}\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+If you want to see if RootSearch missed some roots, you don't need \
+to use Plot when all the samples RootSearch took are available for you to \
+work with.  The next cell plots the samples taken by RootSearch.\
+\>", "Text"],
+
+Cell[BoxData[
+    \(\(plt = 
+        ListPlot[RootSearchSamples, PlotJoined \[Rule] True];\)\)], "Input"],
+
+Cell["\<\
+Then you can use the next cell to get all the samples near the \
+roots.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Cases[RootSearchSamples, {_, _?\((Abs[#] < 0.1 &)\)}] // 
+      TableForm\)], "Input"],
+
+Cell[BoxData[
+    TagBox[GridBox[{
+          {"24.538107315999678`", "0.012775931512384542`"},
+          {"24.54304796313203`", "0.00038232056531795067`"},
+          {"24.54320079921533`", "6.582583367276129`*^-8"},
+          {"24.543200825536548`", "3.375077994860476`*^-13"},
+          {"24.543200825536683`", "0.`"},
+          {"25.722281631900007`", \(-3.1086244689504383`*^-15\)},
+          {"25.72228163190001`", "5.773159728050814`*^-15"},
+          {"25.722281631914253`", "3.562528050338187`*^-11"},
+          {"25.722282122919015`", "1.2279667069847733`*^-6"},
+          {"25.722549040589747`", "0.0006688543604593811`"},
+          {"25.738764647918742`", "0.04161474406124421`"},
+          {"43.38222287600848`", "0.026504835555133166`"},
+          {"43.392030774205615`", "0.0018163216894246936`"},
+          {"43.39275622805311`", "1.2979989492123423`*^-6"},
+          {"43.39275674705014`", "6.326983381654827`*^-11"},
+          {"43.392756747075445`", \(-7.549516567451064`*^-15\)},
+          {"44.57183755343876`", \(-1.3322676295501878`*^-14\)},
+          {"44.57183755343877`", "4.884981308350689`*^-15"},
+          {"44.57183755360909`", "4.259601560363535`*^-10"},
+          {"44.57183910360752`", "3.87674768687063`*^-6"},
+          {"44.57314680500841`", "0.0032767500070836064`"},
+          {"44.5857179621181`", "0.03499211580730588`"}
+          },
+        RowSpacings->1,
+        ColumnSpacings->3,
+        RowAlignments->Baseline,
+        ColumnAlignments->{Left}],
+      (TableForm[ #]&)]], "Output"]
+}, Open  ]],
+
+Cell["\<\
+The next cell shows all the samples taken near one of the local \
+minimum of  f5[x].\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Cases[RootSearchSamples, {_?\((5 < # < 9 &)\), _}] // 
+      TableForm\)], "Input"],
+
+Cell[BoxData[
+    TagBox[GridBox[{
+          {"5.0492218495243035`", "2.2085012084556883`"},
+          {"5.353802103563196`", "1.4050150855483945`"},
+          {"5.67115564240807`", "0.7445491956324806`"},
+          {"5.99085857295287`", "0.3272721576015476`"},
+          {"6.018739198254993`", "0.30428773388846775`"},
+          {"6.1596913777606765`", "0.22284706750630523`"},
+          {"6.230167467513519`", "0.20421534943806519`"},
+          {"6.26540551238994`", "0.20047416916270588`"},
+          {"6.300643557266361`", "0.20045717413210085`"},
+          {"6.614833657890127`", "0.3634792340374342`"},
+          {"6.9368504472264645`", "0.8184189092221503`"},
+          {"7.250746734937469`", "1.4980718247316034`"},
+          {"7.56158954603558`", "2.335269174755269`"},
+          {"7.87608006113551`", "3.2662898858365317`"},
+          {"8.19672518351642`", "4.208216983814691`"},
+          {"8.5167341924506`", "5.045867079134066`"},
+          {"8.822662098703143`", "5.672417188250838`"}
+          },
+        RowSpacings->1,
+        ColumnSpacings->3,
+        RowAlignments->Baseline,
+        ColumnAlignments->{Left}],
+      (TableForm[ #]&)]], "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["RootSearch Options", "Section"],
+
+Cell["\<\
+The next input returns the RootSearch options, which are each \
+explained below.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Options[RootSearch] // TableForm\)], "Input"],
+
+Cell[BoxData[
+    InterpretationBox[GridBox[{
+          {\(InitialSamples \[Rule] 300\)},
+          {\(RootTest \[RuleDelayed] \((Abs[#2] \[LessEqual] 
+                    10\^5\ \((Abs[#1] + $MinMachineNumber)\)\ $MachineEpsilon \
+&)\)\)},
+          {\(MaxBrentSteps \[Rule] 150\)},
+          {\(MaxSecantSteps \[Rule] 150\)},
+          {\(PrecisionGoal \[RuleDelayed] $MachinePrecision\)},
+          {\(InitialPrecision \[RuleDelayed] $MachinePrecision\)}
+          },
+        RowSpacings->1,
+        ColumnSpacings->3,
+        RowAlignments->Baseline,
+        ColumnAlignments->{Left}],
+      TableForm[ {InitialSamples -> 300, RootTest :> (LessEqual[ 
+          Abs[ #2], 
+          Times[ 
+            Power[ 10, 5], 
+            Plus[ 
+              Abs[ #], $MinMachineNumber], $MachineEpsilon]]&), MaxBrentSteps -> 
+        150, MaxSecantSteps -> 150, PrecisionGoal :> $MachinePrecision, 
+        InitialPrecision :> $MachinePrecision}]]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["PrecisionGoal ", "Subsection"],
+
+Cell["The next input displays the PrecisionGoal usage message.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(?PrecisionGoal\)\)], "Input"],
+
+Cell[BoxData[
+    \("PrecisionGoal is an option for various numerical operations which \
+specifies how many digits of precision should be sought in the final result."\
+\)], "Print"]
+}, Open  ]],
+
+Cell["\<\
+In the next cell I use PrecisionGoal to approximate roots with high \
+precision.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = 
+      RootSearch[Sin[x] \[Equal] \(x + 1\)\/8, {x, \(-10\), 10}, 
+        PrecisionGoal \[Rule] 35]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \
+\(-8.2811477368842108589529321423447499911660665435159024`35\)}, {x \[Rule] \
+\(-7.1625203762270904400685296537390978098619875581129477`35\)}, {x \[Rule] \
+\(-2.901595886832870914728408774656605817169409064002`35\)}, {x \[Rule] 
+          0.143418461173332938417502258186950846629624002446`35}, {x \[Rule] 
+          2.665620694845031472416083204164476606156047570584`35}}\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+I think you will find that no other values with 35 digits of \
+precision give a better estimate of the roots.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Sin[x] - \(x + 1\)\/8 /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({\(-5.06`-10.9461*^-46\), 2.554`-10.3301*^-45, 
+      1.1111`-9.4568*^-44, \(-7.`-12.3686*^-49\), \(-1.`-13.2955*^-48\)}\)], \
+"Output"]
+}, Open  ]],
+
+Cell["\<\
+  When trying to find roots with high precision, you generally need \
+to express the equation without using machine precision numbers.
+In the next cell the previous example is repeated with use of machine \
+precision numbers in the equation and we don't get the roots with higher \
+precision.\
+\>", "Text",
+  CellFrame->0.5,
+  CellDingbat->"\[WarningSign]",
+  Magnification->1.5],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = 
+      RootSearch[Sin[x] \[Equal] x\/8 + 0.125, {x, \(-10\), 10}, 
+        PrecisionGoal \[Rule] 35]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(-8.281147736884211`\)}, {x \[Rule] \
+\(-7.16252037622709`\)}, {x \[Rule] \(-2.901595886832871`\)}, {x \[Rule] 
+          0.14341846117333293`}, {x \[Rule] 2.6656206948450314`}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Sin[x] - \(x + 1\)\/8 /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({2.220446049250313`*^-16, 1.1102230246251565`*^-16, 
+      1.6653345369377348`*^-16, 0.`, 5.551115123125783`*^-17}\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+In the next cell, we find some roots of the Riemann Zeta function \
+with high precision.\
+\>", "Text",
+  CellFrame->{{0, 0}, {0, 0.5}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = 
+      RootSearch[Zeta[1/2 + \[ImaginaryI]\ y] \[Equal] 0, {y, 0, 40}, 
+        PrecisionGoal \[Rule] 30]\)], "Input"],
+
+Cell[BoxData[
+    \({{y \[Rule] 
+          14.134725141734693790457251983562470270765847`30}, {y \[Rule] 
+          21.022039638771554992628479593896902777333698`30}, {y \[Rule] 
+          25.0108575801456887632137909925628218186604468`30}, {y \[Rule] 
+          30.42487612585951321031189753058409132018`30}, {y \[Rule] 
+          32.93506158773918969066236896407490348881`30}, {y \[Rule] 
+          37.58617815882567125721776348070533282138`30}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Zeta[1/2 + \[ImaginaryI]\ y] /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({2.225362220893`0.1676*^-36 - 
+        4.94125893684`0.0043*^-37\ \[ImaginaryI], \
+\(-8.869992934126`-0.2037*^-36\) + 
+        1.177705296382`-0.5241*^-36\ \[ImaginaryI], 
+      2.2800513490637`-0.9072*^-35 + 
+        6.688141726634`-1.3563*^-36\ \[ImaginaryI], \
+\(-1.5238449761259`-0.0062*^-34\) + 
+        2.27762629224259`0.5925*^-34\ \[ImaginaryI], 
+      6.187952984`-2.0978*^-34 + 8.684171748`-1.9653*^-34\ \[ImaginaryI], 
+      6.1764532097`-2.3871*^-33 + 
+        2.46786731539`-1.5068*^-32\ \[ImaginaryI]}\)], "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["InitialPrecision", "Subsection"],
+
+Cell["The next input displays the InitialPrecision usage message.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(?InitialPrecision\)\)], "Input"],
+
+Cell[BoxData[
+    \("InitialPrecision is an option for RootSearch which specifies the \
+precision of the values where a function is intially sampled. If the \
+InitialPrecision setting is a positive value less than or equal to \
+$MachinePrecision, then machine numbers are used. If the setting is larger \
+than $MachinePrecision the setting specifies the level of arbitrary precision \
+used."\)], "Print"]
+}, Open  ]],
+
+Cell[TextData[{
+  "An earlier example found a double root to the equation ",
+  StyleBox["(Exp[x-\[Pi]]\[Equal]1-\[Pi]+x)", "Input"],
+  ".  RootSearch can converge very close to the exact root of this equation, \
+if it avoids sampling at machine precision numbers.  In the next input the \
+setting  ",
+  Cell[BoxData[
+      \(TraditionalForm\`\((InitialPrecision \[Rule] 18)\)\)]],
+  " is used instead of the default setting  ",
+  Cell[BoxData[
+      \(TraditionalForm\`\((InitialPrecision \[RuleDelayed] \
+$MachinePrecision)\)\)]],
+  ". \n\nNote:  The root found in this example is a machine precision number. \
+This is due to use of the default setting \
+(PrecisionGoal\[RuleDelayed]$MachinePrecision) in which case RootSearch \
+applies N[roots] just before the roots are returned."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = 
+      RootSearch[Exp[x - \[Pi]] \[Equal] 1 - \[Pi] + x, {x, \(-3\), 4}, 
+        InitialPrecision \[Rule] 18]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] 3.141592653589793`}}\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+The next input shows that the approximate value of the double root \
+is very close to the exact machine number used for \[Pi].\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(x - \[Pi] /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({0.`}\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+In some pathological cases we have to avoid use of machine \
+precision numbers to get reliable results. The next cell gives one such \
+example.\
+\>", "Text",
+  CellFrame->{{0, 0}, {0, 0.5}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(expr = Sin[1.1\[InvisibleSpace] + x] - Sin[1.71*\ x];\)\), "\n", 
+    \(\(big = 10^12;\)\), "\n", 
+    \(soln = RootSearch[expr \[Equal] 0, {x, big, big + 20}]\)}], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] 1.0000000000006691`*^12}, {x \[Rule] 
+          1.0000000000029875`*^12}, {x \[Rule] 
+          1.0000000000053062`*^12}, {x \[Rule] 
+          1.0000000000076246`*^12}, {x \[Rule] 
+          1.0000000000082247`*^12}, {x \[Rule] 
+          1.0000000000099431`*^12}, {x \[Rule] 
+          1.0000000000122617`*^12}, {x \[Rule] 
+          1.0000000000145802`*^12}, {x \[Rule] 
+          1.0000000000168987`*^12}, {x \[Rule] 
+          1.0000000000170741`*^12}, {x \[Rule] 
+          1.0000000000192172`*^12}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(expr /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({\(-0.000022395218369331005`\), 0.00014837301454490026`, 
+      0.00009223040977357488`, \(-6.21900953068355`*^-7\), 
+      0.000016247440215444442`, 0.00005804232364070572`, 
+      0.0001591290036648818`, \(-0.000043657920538731076`\), \
+\(-2.9794184033260507`*^-6\), \(-9.462353321110228`*^-6\), \
+\(-0.00010487559744754016`\)}\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+In the previous cell we see that the roots found don't solve the \
+equation very well.  To get better results we must first modify our \
+expression as in the next cell  to make sure it's free of machine precision \
+numbers.  In some cases infinite precision is very time consuming and it \
+would be better to use something like \
+(num_Real\[RuleDelayed]SetPrecision[num,70]).\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(expr = 
+      expr /. num_Real \[RuleDelayed] 
+          SetPrecision[num, \[Infinity]]\)], "Input"],
+
+Cell[BoxData[
+    \(\(-Sin[\(1925288840700887\ x\)\/1125899906842624]\) + 
+      Sin[2476979795053773\/2251799813685248 + x]\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+In the next two cells we see that using values for (x) with 18 \
+digits of precision gives a value for (expr) with less than 5 digits of \
+precision. It seems we are better off using values for (x) with 28 digits of \
+precision.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(expr /. x \[Rule] N[big + 10, 18] // InputForm\)], "Input"],
+
+Cell["-0.090719798956097643023061`4.7438", "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(expr /. x \[Rule] N[big + 10, 28] // InputForm\)], "Input"],
+
+Cell["\<\
+-0.0907197989560973124205607087`14\\
+.7438\
+\>", "Output"]
+}, Open  ]],
+
+Cell["\<\
+In the next cell RootSearch does all the work with arbitrary \
+precision and gives a good approximation of the roots.  In some cases you can \
+get good results with a setting for InitialPrecision that is a few digits \
+less than the setting of PrecisionGoal. But for best reliability I recommend \
+you always use (InitialPrecision\[Rule]InitP, PrecisionGoal\[Rule]GoalP) with \
+(InitP\[LessEqual]GoalP).\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = 
+      RootSearch[expr \[Equal] 0, {x, big, big + 20}, 
+        InitialPrecision \[Rule] 28, PrecisionGoal \[Rule] 28]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] 
+          1.0000000000006690671511770497537552825378`28*^12}, {x \[Rule] 
+          1.0000000000029875857147119525431632577522`28*^12}, {x \[Rule] 
+          1.000000000005306104278246855332571232999`28*^12}, {x \[Rule] 
+          1.0000000000076246228417817581219792082454`28*^12}, {x \[Rule] 
+          1.0000000000082246691760648247637261212805`28*^12}, {x \[Rule] 
+          1.0000000000099431414053166609113871834926`28*^12}, {x \[Rule] 
+          1.0000000000122616599688515637007951587394`28*^12}, {x \[Rule] 
+          1.0000000000145801785323864664902031339856`28*^12}, {x \[Rule] 
+          1.0000000000168986970959213692796111092329`28*^12}, {x \[Rule] 
+          1.0000000000170742259467402991177045729306`28*^12}, {x \[Rule] 
+          1.0000000000192172156594562720690190844797`28*^12}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(expr /. soln\)], "Input"],
+
+Cell[BoxData[
+    \({\(-5.63`-9.329*^-26\), 
+      1.82405724`-9.1536*^-25, \(-1.874`-9.0948*^-25\), 
+      3.46`-9.2189*^-26, \(-1.723`-9.0578*^-25\), 
+      1.096`-9.1513*^-25, \(-2.158`-9.0947*^-25\), 
+      2.212`-8.9771*^-25, \(-1.1849536`-9.1536*^-26\), 
+      5.78`-9.0435*^-26, \(-1.87`-8.9996*^-25\)}\)], "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["RootTest", "Subsection"],
+
+Cell["\<\
+Often times we can find a value where a function is 'very close' to \
+zero and we say it is a root if we can't find a near by value where the \
+function is closer to zero.  However, it could be that the function isn't \
+zero at any point near the alleged root. How does one decide if a suspected \
+root actually is a root? The RootTest option allows a user to control what is \
+considered a root, and causes RootSearch to only return potential roots that \
+meet the specified condition. The next input displays the RootTest usage \
+message.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(?RootTest\)\)], "Input"],
+
+Cell[BoxData[
+    \("RootTest is an option for RootSearch which determines whether specific \
+values are roots of an equation. Once the core algorithm for \
+RootSearch[lhs==rhs,{x,xmin,xmax}] is finished a list of points \
+{{x1,y1},{x2,y2}, ...} is effectively made where each xi is a likely root and \
+yi is the value of (lhs-rhs) when (x=xi). Only the likely roots for which \
+RootTest is True are returned.  The RootTest setting should be a function of \
+one or two arguments where xi is the first argument and yi is the second \
+argument."\)], "Print"]
+}, Open  ]],
+
+Cell[TextData[{
+  "The function ",
+  StyleBox["f7[x]", "Input"],
+  " defined in the next cell can demonstrate the utility of the RootTest \
+option.  In this case ",
+  StyleBox["f7[x]", "Input"],
+  " changes sign at ",
+  StyleBox["(x=\[MediumSpace]\[Pi]/2)\[MediumSpace]", "Input"],
+  "and ",
+  StyleBox["(x=\[MediumSpace]-\[Pi]/2)", "Input"],
+  " and the plot is not continuous at those points. In fact the equation ",
+  StyleBox["(f7[x]\[Equal]0)\[MediumSpace]", "Input"],
+  "has no real roots."
+}], "Text"],
+
+Cell[BoxData[{
+    \(\(ClearAll[f7];\)\), "\n", 
+    \(\(f7[x_] := If[Abs[x] < \[Pi]/2, x^2 - 2.55, x^2 - 2.35];\)\), "\n", 
+    \(\(Plot[f7[x], {x, \(-2\), 2}];\)\)}], "Input"],
+
+Cell[TextData[{
+  "In the next input RootSearch says ",
+  StyleBox["f7[x]", "Input"],
+  " has a roots at (x= -1.5708) and (x=1.5708).  The RootTest setting in this \
+example keeps any potential root where ",
+  StyleBox["f7[x]", "Input"],
+  " is less than 0.1."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(RootSearch[f7[x] \[Equal] 0, {x, \(-3\), 3}, 
+      RootTest \[Rule] \((Abs[#2] < 0.1 &)\)]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(-1.5707963267948963`\)}, {x \[Rule] 
+          1.5707963267948963`}}\)], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "In the next input RootSearch tells us no roots were found. In this case \
+the RootSearch algorithm converged on the same values as the previous \
+example, but the roots were discarded because of the RootTest setting. With \
+the setting in this example only potential roots for which ",
+  StyleBox["(Abs[f7[x]]<0.0001)", "Input"],
+  " are returned."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(RootSearch[f7[x] \[Equal] 0, {x, \(-3\), 3}, 
+      RootTest \[Rule] \((Abs[#2] < 0.0001 &)\)]\)], "Input"],
+
+Cell[BoxData[
+    \({}\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+The RootSearch setting in the next input causes any potential root \
+to be accepted. Notice in this case the RootTest setting isn't simply True, \
+it's a function that always returns True.  This setting is useful if you \
+think the derivative of (lhs-rhs) is very steep at some of the roots you are \
+looking for.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(RootSearch[f7[x] \[Equal] 0, {x, \(-3\), 3}, 
+      RootTest \[Rule] \((True &)\)]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(-1.5707963267948963`\)}, {x \[Rule] 
+          1.5707963267948963`}}\)], "Output"]
+}, Open  ]],
+
+Cell[TextData[{
+  "By using the setting RootTest\[Rule](True&) you are assured that every \
+potential root that RootSearch converged on is returned.  However, you must \
+keep in mind that some of the roots returned may not be roots at all. For \
+example in the next cell RootSearch tells us ",
+  Cell[BoxData[
+      \(TraditionalForm\`ArcCot[x - 1/3]\)]],
+  " has a root at ",
+  Cell[BoxData[
+      \(TraditionalForm\`\((x \[Rule] 0.333333)\)\)]],
+  " which is clearly not a root."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(RootSearch[ArcCot[x - 1/3] \[Equal] 0, {x, 0, 3}, 
+      RootTest \[Rule] \((True &)\)]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] 0.3333333333333333`}}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["The default setting for -- RootTest", "Subsubsection"],
+
+Cell["The next input displays the default RootTest setting.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Options[RootSearch, RootTest]\)], "Input"],
+
+Cell[BoxData[
+    \({RootTest \[RuleDelayed] \((Abs[#2] \[LessEqual] 
+              10\^5\ \((Abs[#1] + $MinMachineNumber)\)\ $MachineEpsilon &)\)}\
+\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+When the default setting \
+(PrecisionGoal\[RuleDelayed]$MachinePrecision) is used RootSearch returns \
+each root with an error of less than 1 Ulp (the distance between adjacent \
+machine numbers).  1 Ulp at a machine number (x) satisfies the following \
+inequality.\
+\>", "Text"],
+
+Cell[BoxData[
+    \(Ulp[
+        x] \[LessEqual] \((Abs[
+              x] + $MinMachineNumber)\) $MachineEpsilon\)], "Input",
+  Evaluatable->False],
+
+Cell[TextData[{
+  "So if ",
+  Cell[BoxData[
+      FormBox[
+        StyleBox[\((Abs[\(f'\)\ [x]] < 10\^5)\),
+          "Input"], TraditionalForm]]],
+  " at a root, then the value of f[x] at the approximate root will satisfy \
+the following inequality which is used in the default RootTest setting."
+}], "Text"],
+
+Cell[BoxData[
+    \(Abs[
+        f[x]] \[LessEqual] \(10\^5\) \((Abs[
+              x] + $MinMachineNumber)\) $MachineEpsilon\)], "Input",
+  Evaluatable->False],
+
+Cell["\<\
+The default RootTest is an implementation of this inequality, and \
+it normally gives good results.\
+\>", "Text"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["MaxBrentSteps", "Subsection"],
+
+Cell["The next input displays the MaxBrentSteps usage message.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(?MaxBrentSteps\)\)], "Input"],
+
+Cell[BoxData[
+    \("MaxBrentSteps is an option for RootSearch which specifies the maximum \
+number of steps the algorithm should take when attempting to find a specific \
+root using Brent's method."\)], "Print"]
+}, Open  ]],
+
+Cell[TextData[{
+  "Notice Brent's method is sometimes used by the ",
+  StyleBox["Mathematica",
+    FontSlant->"Italic"],
+  " FindRoot function and by the RootSearch function.  The default setting \
+(MaxBrentSteps\[Rule]150) is a little more than sufficient for even the most \
+difficult problems I tried.  RootSearch should be very robust with this \
+default setting.  In the next cell I use the setting \
+(MaxBrentSteps\[Rule]100) and RootSearch doesn't find the multiple roots in \
+the given interval.  Since Abs'[x] is not defined RootSearch can not use a \
+trick discussed above to ensure rapid convergence at the multiple roots."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(Plot[\((x - 1/2)\)\ Cos[x] Abs[Cos[x]], {x, 0, 
+          8}];\)\n\), "\[IndentingNewLine]", 
+    \(RootSearch[\((x - 1/2)\)\ Cos[x] Abs[Cos[x]] \[Equal] 0, {x, 0, 8}, 
+      MaxBrentSteps \[Rule] 100]\)}], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] 0.5`}}\)], "Output"]
+}, Open  ]],
+
+Cell["The next cell finds all the roots.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(RootSearch[\((x - 1/2)\)\ Cos[x] Abs[Cos[x]] \[Equal] 0, {x, 0, 8}, 
+      MaxBrentSteps \[Rule] 150]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] 0.5`}, {x \[Rule] 1.5707963267948966`}, {x \[Rule] 
+          4.71238898038469`}, {x \[Rule] 7.853981633974483`}}\)], "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["MaxSecantSteps", "Subsection"],
+
+Cell["The next input displays the MaxSecantSteps usage message.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(?MaxSecantSteps\)\)], "Input"],
+
+Cell[BoxData[
+    \("MaxSecantSteps is an option for RootSearch which specifies the maximum \
+number of steps the algorithm should take when attempting to find a specific \
+root using a modified secant method."\)], "Print"]
+}, Open  ]],
+
+Cell["\<\
+The default setting (MaxSecantSteps\[Rule]90) is a little more than \
+sufficient for even the most difficult problems I tried. RootSearch should \
+work very well with this default setting. In the next input I use the setting \
+(MaxSecantSteps\[Rule]8) and RootSearch doesn't find the root at \
+1.49999.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(ClearAll[f2];\)\), "\n", 
+    \(f2[x_] := 
+      If[x < 3/2, \@\(3/2 - x\) - Exp[\(-4\)\ x], 
+        2*\ x\ Exp[\(-x\)]]\), "\n", 
+    \(\(Plot[f2[x], {x, \(-1\), 3}, 
+        PlotRange \[Rule] {\(-1\), 1}];\)\n\), "\[IndentingNewLine]", 
+    \(soln = 
+      RootSearch[f2[x] \[Equal] 0, {x, \(-25\), 25}, 
+        MaxSecantSteps \[Rule] 8]\)}], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(-0.0552005647310447`\)}}\)], "Output"]
+}, Open  ]],
+
+Cell["In the next cell RootSearch finds both roots.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(soln = 
+      RootSearch[f2[x] \[Equal] 0, {x, \(-25\), 25}, 
+        MaxSecantSteps \[Rule] 90]\)], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(-0.0552005647310447`\)}, {x \[Rule] 
+          1.4999938554856136`}}\)], "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["InitialSamples", "Subsection"],
+
+Cell["The next input displays the InitialSamples usage message.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(\(?InitialSamples\)\)], "Input"],
+
+Cell[BoxData[
+    \("InitialSamples is an option for RootSearch which specifies the number \
+of nearly equally spaced samples that should be taken before root finding \
+methods are used to converge on roots."\)], "Print"]
+}, Open  ]],
+
+Cell["\<\
+The setting (InitialSamples\[Rule]300) is used by default, and this \
+allows a reasonable assurance that all roots have been found without spending \
+a long time sampling the function.  The next input demonstrates what can \
+happen if a small setting for this option is used. In this example RootSearch \
+finds 5 roots when there are actually 21 roots.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(Plot[
+        Sin[4\ x] - \(x + 1\)\/8, {x, \(-10\), 
+          10}];\)\n\), "\[IndentingNewLine]", 
+    \(soln = 
+      RootSearch[Sin[4\ x] \[Equal] \(x + 1\)\/8, {x, \(-10\), 10}, 
+        InitialSamples \[Rule] 22]\)}], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(-8.348289378299722`\)}, {x \[Rule] \
+\(-8.128931534118271`\)}, {x \[Rule] \(-5.353916539697934`\)}, {x \[Rule] \
+\(-3.8363831890811366`\)}, {x \[Rule] \(-3.2116177756546436`\)}, {x \[Rule] \
+\(-0.7919019607177706`\)}, {x \[Rule] 0.032351189053103635`}, {x \[Rule] 
+          0.730877103530479`}, {x \[Rule] 3.2828240626757283`}, {x \[Rule] 
+          3.767387062972021`}, {x \[Rule] 5.272491509475395`}}\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+In the next cell RootSearch finds all 21 roots with 300 initial \
+samples.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(soln = 
+      RootSearch[Sin[4\ x] \[Equal] \(x + 1\)\/8, {x, \(-10\), 10}, 
+        InitialSamples \[Rule] 300]\), "\[IndentingNewLine]", 
+    \(Length[soln]\)}], "Input"],
+
+Cell[BoxData[
+    \({{x \[Rule] \(-8.348289378299722`\)}, {x \[Rule] \
+\(-8.128931534118271`\)}, {x \[Rule] \(-6.862951194089526`\)}, {x \[Rule] \
+\(-6.471470625613025`\)}, {x \[Rule] \(-5.353916539697934`\)}, {x \[Rule] \
+\(-4.837462268522024`\)}, {x \[Rule] \(-3.8363831890811366`\)}, {x \[Rule] \
+\(-3.2116177756546436`\)}, {x \[Rule] \(-2.3149160596763254`\)}, {x \[Rule] \
+\(-1.5892263387762744`\)}, {x \[Rule] \(-0.7919019607177706`\)}, {x \[Rule] 
+          0.032351189053103635`}, {x \[Rule] 0.730877103530479`}, {x \[Rule] 
+          1.6553816023295524`}, {x \[Rule] 2.251554720739636`}, {x \[Rule] 
+          3.2828240626757283`}, {x \[Rule] 3.767387062972021`}, {x \[Rule] 
+          4.92068856358791`}, {x \[Rule] 5.272491509475395`}, {x \[Rule] 
+          6.596105432790534`}, {x \[Rule] 6.7398184613474434`}}\)], "Output"],
+
+Cell[BoxData[
+    \(21\)], "Output"]
+}, Open  ]]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["The RootSearch Algorithm", "Section"],
+
+Cell[TextData[{
+  "When given  RootSearch[lhs==rhs, {x,xmin,xmax}]  the algorithm starts by \
+determining if  D[lhs-rhs, x] can be computed.  When the derivative can be \
+computed a routine called SearchForRootsU is used.  Otherwise the routine \
+SearchForRootsF is used.\n\nThe first thing that happens in SearchForRootsU \
+and SearchForRootsF is that they make a list of points where \nf[x_] \
+:=(lhs-rhs) is sampled.  Next SearchForRootsU or  SearchForRootsF determines \
+that there may be roots between certain samples and appropriate algorithms \
+are used to narrow the approximation of each potential root. \n\nOnce \
+SearchForRootsU or SearchForRootsF is finished the list of potential roots is \
+screened and only those that pass the test specified by the setting of the \
+RootTest option are returned.  Details are discussed in the sections that \
+follow.  \n\nBrent's root finding algorithm is often used by RootSearch.  \
+Details of Brent's method can be found in section 9.3 of Numerical Recipes in \
+C ",
+  ButtonBox["[Press, Teukolsky, Vetterling, Flannery 1994]",
+    ButtonData:>"Numerical Recipes",
+    ButtonStyle->"Hyperlink"],
+  ".  Brent's method was originally published in ",
+  ButtonBox["[Brent 1971]",
+    ButtonData:>"Brent's paper",
+    ButtonStyle->"Hyperlink"],
+  ".  Brent's method is very robust and efficient and theorems supporting \
+this can be found in ",
+  ButtonBox["[Brent 1973]",
+    ButtonData:>"Brent's book",
+    ButtonStyle->"Hyperlink"],
+  ".\n\nI developed the GoldenSecant method for use in RootSearch but never \
+had anything about it published. I am puzzled about why an algorithm similar \
+to GoldenSecant has never been published.  My GoldenSecant method uses the \
+well known secant method which is presented in section 9.2 of Numerical \
+Recipes in C ",
+  ButtonBox["[Press, Teukolsky, Vetterling, Flannery 1994]",
+    ButtonData:>"Numerical Recipes",
+    ButtonStyle->"Hyperlink"],
+  ".  My GoldenSecant method also uses estimates based on the Golden-Section \
+find minimum algorithm which is presented in section 10.1 of Numerical \
+Recipes in C ",
+  ButtonBox["[Press, Teukolsky, Vetterling, Flannery 1994]",
+    ButtonData:>"Numerical Recipes",
+    ButtonStyle->"Hyperlink"],
+  "."
+}], "Text"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+  "Determine if ",
+  StyleBox["Mathematica",
+    FontSlant->"Italic"],
+  " can compute the derivative of (lhs-rhs)"
+}], "Subsection"],
+
+Cell[TextData[{
+  "When given RootSearch[ lhs==rhs, { x, xmin, xmax}] we are searching for \
+roots of  ",
+  Cell[BoxData[
+      \(TraditionalForm\`f[x] = \((lhs - rhs)\)\)]],
+  ".  Popular root finding methods such as Newton's method, secant method, \
+and Brent's method converge slowly on a multiple root of f[x].  However, we \
+have a very effective trick for efficiently converging on multiple roots.  If \
+derivatives of f[x] exist at and near a root (x=x0) of f[x]. Then (x=x0) is a \
+first order root of   ",
+  Cell[BoxData[
+      \(TraditionalForm\`u[x_] := If[f[x] \[Equal] 0, 0, \(f'\)[x]/f[x]]\)]],
+  ".  Notice this trick doesn't require that we know the order of the root, \
+or even if the root is a multiple root.  Since this trick is so effective we \
+will look for roots of u[x] instead of roots of f[x], but this requires that \
+",
+  StyleBox["Mathematica",
+    FontSlant->"Italic"],
+  " knows how to compute ",
+  Cell[BoxData[
+      \(TraditionalForm\`D[f[x], \ x]\)]],
+  ".  \nSometimes (lhs-rhs) involves functions such as Abs[x] which ",
+  StyleBox["Mathematica",
+    FontSlant->"Italic"],
+  " can't compute the derivative of, the RootSearch algorithm automatically \
+detects this condition and in that case it finds roots of f[x].  "
+}], "Text"],
+
+Cell[TextData[{
+  "When ",
+  StyleBox["Mathematica",
+    FontSlant->"Italic"],
+  " can compute ",
+  Cell[BoxData[
+      \(TraditionalForm\`D[f[x], \ x]\)]],
+  "  RootSearch uses a function in the package called SearchForRootsU which \
+finds roots of u[x] defined above.  When ",
+  StyleBox["Mathematica",
+    FontSlant->"Italic"],
+  " can't compute ",
+  Cell[BoxData[
+      \(TraditionalForm\`D[f[x], \ x]\)]],
+  " RootSearch uses a function in the package called SearchForRootsF which \
+finds roots of f[x]. \n\nI discovered on my own that if f[x] is well behaved \
+any roots of u[x] above are simple roots.  After making my discovery I found  \
+",
+  ButtonBox["http://mathworld.wolfram.com/SchroedersMethod.html",
+    ButtonData:>{
+      URL[ "http://mathworld.wolfram.com/SchroedersMethod.html"], None},
+    ButtonStyle->"Hyperlink"],
+  "  which references [",
+  ButtonBox["Stewart 1993",
+    ButtonData:>"Stewart 1993",
+    ButtonStyle->"Hyperlink"],
+  "] and in that paper Ernst Schr\[ODoubleDot]der is credited with publishing \
+this property of u[x] in 1870."
+}], "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Make a list of initial Samples", "Subsection"],
+
+Cell["\<\
+The first thing done by SearchForRootsU and SearchForRootsF is that \
+they make a list of points between xmin, and xmax where f[x] is sampled.   \
+The end points (xmin and xmax) are included in the list of sample points.  \
+The number of points in the list is determined by the option InitialSamples, \
+and the samples are nearly equally spaced with a bit of noise added.  The \
+noise is added to reduce the chance that details are missed if f[x] is \
+periodic.  If  ( xmin < 0 < xmax ) the value 0 is added to the list without \
+noise, and no noise is added to the points at xmin, and xmax.  Depending on \
+the settings of the options InitialPrecision and PrecisionGoal the list of \
+points may be converted to arbitrary precision numbers.  Once a list of \
+points is made f[x] is sampled at each point in the list.  It may turn out \
+that f[x] evaluates to a complex number, and in that case the complex number \
+is converted to a real number that normally allows efficient convergence to a \
+root.  For details on this conversion see the definition of MakeReal in the \
+package and the associated comments in the code. 
+Evaluating u[x] is more time consuming than evaluation f[x], so only f[x] is \
+evaluated at each initial sample.\
+\>", "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["SearchForRootsU", "Subsection"],
+
+Cell["\<\
+SearchForRootsU collects potentially five sets of roots as \
+described below and returns  Flatten[{soln1, soln2, soln3, soln4, soln5}].  \
+This scheme only requires computing u[x] where u[x] changes sign.
+
+soln1 = ( Points where the initial samples turn out to be roots of f[x]. )
+soln2 = ( Roots found using Brent's method on u[x] where f[x] and u[x] both \
+change sign. )
+soln3 = ( Roots found using Brent's method on f[x] where f[x] changes sign \
+but u[x] doesn't change sign. )
+soln4 = ( Roots found using Brent's method on u[x] where there are \
+consecutive initial samples x1, x2, x3 meeting conditions 1, 2, 3 below and \
+either condition (4.a) or (4.b) is also true.)
+soln5 = ( Roots found using the GoldenSecant method on f[x] where there are \
+consecutive initial samples x1, x2, x3 meeting conditions 1, 2, 3 below and \
+neither conditions (4.a) or (4.b) are true. ) 
+
+The sections that follow discuss finding solutions (soln2, soln3, soln4, \
+soln5) in greater detail.  
+
+Conditions used for soln4 and soln5:
+(1)   x1<x2<x3 
+(2)   f[x1]], f[x2], f[x3] are (all positive) or (all negative).
+(3)   ( Abs[f[x2]] < Abs[f[x1]] )  and  ( Abs[f[x2]] < Abs[f[x3]] ).
+(4.a)   u[x] is positive or negative at x1 and u[x] has opposite sign at x2 \
+and x3.
+(4.b)   u[x] is positive or negative at x3 and u[x] has opposite sign at x1 \
+and x2.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell["Soln2", "Subsubsection"],
+
+Cell["\<\
+Below we have an example where f[x] has a third order root at (x=\
+\[Pi]).  Once f[x] is sampled at 
+(x1 = 3.05) and (x2 = 3.2) we could use Brent's method on f[x] to converge on \
+the root.  However, from the plots made below it's easy to see that \
+converging on a root of u[x] is much easier. In this case Brent's method is \
+used to converge on the root of u[x]  at (x=\[Pi]).\
+\>", "Text"],
+
+Cell[BoxData[{
+    \(\(f[x_] := Sin[x] + x - \[Pi];\)\), "\[IndentingNewLine]", 
+    \(\(\(u[x_?NumericQ] := 
+        If[f[x] \[Equal] 0, f[x], f[x]/\(f'\)[x]];\)\(\[IndentingNewLine]\)
+    \)\), "\[IndentingNewLine]", 
+    \(\({x1, x2} = {3.05, 3.2};\)\), "\[IndentingNewLine]", 
+    \(\(\({f1, f2, u1, u2} = {f[x1], f[x2], u[x1], 
+          u[x2]};\)\(\[IndentingNewLine]\)
+    \)\), "\[IndentingNewLine]", 
+    \(\(\(Plot[f[x], {x, 2.8, 3.3}, 
+        Epilog \[Rule] {PointSize[0.02], \ Point[{x1, f1}], 
+            Point[{x2, f2}], \[IndentingNewLine]Text["\<f[x]\>", 
+              Offset[{24, 18}, {x2, f2}]]}];\)\(\[IndentingNewLine]\)
+    \)\), "\[IndentingNewLine]", 
+    \(\(Plot[u[x], {x, 2.8, 3.3}, 
+        Epilog \[Rule] {PointSize[0.02], \ Point[{x1, u1}], 
+            Point[{x2, u2}], \[IndentingNewLine]Text["\<u[x]\>", 
+              Offset[{40, 32}, {x2, f2}]]}];\)\)}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Soln3", "Subsubsection"],
+
+Cell["\<\
+It's possible that samples are found where f[x] changes sign, but \
+u[x] doesn't change sign.  The next cell makes a graphic where that is the \
+case.  When that happens we use Brent's method to converge on a root of f[x]. \
+ In this case Brent's method can't converge quickly on a multiple root, but \
+at least it's guaranteed to converge if given enough iterations.  When \
+Brent's method is used to converge on a first order root, it normally \
+converges very quickly.\
+\>", "Text"],
+
+Cell[BoxData[{
+    \(\(f[
+          x_] := \((Cos[x] + 0.995)\) \((1 - 
+                UnitStep[x - \[Pi]])\) + \((Cos[x] - 1.1)\) \((1 - 
+                UnitStep[\[Pi] - x])\);\)\), "\n", 
+    \(\(\(u[x_?NumericQ] := 
+        If[f[x] \[Equal] 0, f[x], f[x]/\(f'\)[x]];\)\(\n\)
+    \)\), "\[IndentingNewLine]", 
+    \(\({x0, x1} = {2.2, 3.6};\)\), "\[IndentingNewLine]", 
+    \(\(\({f0, f1, u0, u1} = {f[x0], f[x1], u[x0], u[x1]};\)\(\n\)
+    \)\), "\[IndentingNewLine]", 
+    \(\(\(Plot[f[x], {x, 0, 5}, 
+        Epilog \[Rule] {PointSize[0.02], \ Point[{x0, f0}], 
+            Point[{x1, f1}], \[IndentingNewLine]Text["\<f[x]\>", 
+              Offset[{18, 0}, {1.0, f[1.0]}]]}];\)\(\[IndentingNewLine]\)
+    \)\), "\n", 
+    \(\(Plot[u[x], {x, 0, 5}, PlotRange \[Rule] {\(-5\), 1}, 
+        Epilog \[Rule] {PointSize[0.02], \ Point[{x0, u0}], 
+            Point[{x1, u1}], \[IndentingNewLine]Text["\<u[x]\>", 
+              Offset[{18, 0}, {1.0, u[1.0]}]]}];\)\)}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Soln4", "Subsubsection"],
+
+Cell["\<\
+In other cases samples are found where f[x] doesn't change sign, \
+but  f[x]  has a local extremum and u[x] changes sign at the local extremum.  \
+An example illustrating that case is shown with the graphic made below.  In \
+this case Brent's method is used to converge on a root of u[x].\
+\>", "Text"],
+
+Cell[BoxData[{
+    \(\(f[x_] := 1 - Sin[x];\)\), "\[IndentingNewLine]", 
+    \(\(\(u[x_?NumericQ] := 
+        If[f[x] \[Equal] 0, f[x], f[x]/\(f'\)[x]];\)\(\[IndentingNewLine]\)
+    \)\), "\[IndentingNewLine]", 
+    \(\({x1, x2, x3} = {0.8, 2.0, 2.3};\)\), "\[IndentingNewLine]", 
+    \(\(\({f1, f2, f3, u1, u2, u3} = {f[x1], f[x2], f[x3], u[x1], u[x2], 
+          u[x3]};\)\(\[IndentingNewLine]\)
+    \)\), "\[IndentingNewLine]", 
+    \(\(\(Plot[f[x], {x, 0, 3}, 
+        Epilog \[Rule] {PointSize[0.02], \ Point[{x1, f1}], Point[{x2, f2}], 
+            Point[{x3, f3}], \[IndentingNewLine]Text["\<f[x]\>", 
+              Offset[{30, 16}, {x3, f3}]]}];\)\(\[IndentingNewLine]\)
+    \)\), "\[IndentingNewLine]", 
+    \(\(Plot[u[x], {x, 0, 3}, 
+        Epilog \[Rule] {PointSize[0.02], \ Point[{x1, u1}], Point[{x2, u2}], 
+            Point[{x3, u3}], \[IndentingNewLine]Text["\<u[x]\>", 
+              Offset[{35, 8}, {x3, u3}]]}];\)\)}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Soln5", "Subsubsection"],
+
+Cell["\<\
+It's also possible that samples are found where f[x] has a local \
+extremum and neither f[x] or u[x] change sign.  In that case Brent's method \
+can't be used on either f[x] or u[x].  What we need here is a method of \
+converging on the local extrema of f[x], and we want to efficiently converge \
+in the event the local extrema is at a root of f[x].  
+
+In this case RootSearch uses an algorithm I call GoldenSecant.  The idea is \
+that a secant step is used on most iterations, but a GoldenSection find \
+minimum step is taken when a secant step would be poor choice. 
+
+The next cell makes a graphic for a situation where my GoldenSecant method is \
+useful.\
+\>", "Text"],
+
+Cell[BoxData[{
+    \(\(f[x_] := 
+        If[x < 3/2, \@\(3/2 - x\) - Exp[\(-4\)\ x], 
+          2*\ x\ Exp[\(-x\)]];\)\), "\n", 
+    \(\(\(u[x_?NumericQ] := 
+        If[f[x] \[Equal] 0, f[x], f[x]/\(f'\)[x]];\)\(\[IndentingNewLine]\)
+    \)\), "\[IndentingNewLine]", 
+    \(\({xa, xb, xc} = {0.9, 1.4, 2.0};\)\), "\[IndentingNewLine]", 
+    \(\({fa, fb, fc, ua, ub, uc} = {f[xa], f[xb], f[xc], u[xa], u[xb], 
+          u[xc]};\)\), "\[IndentingNewLine]", 
+    \(\(Plot[\ f[x], {x, 0.7, 3}, 
+        Epilog \[Rule] {PointSize[0.02], \ Point[{xa, fa}], Point[{xb, fb}], 
+            Point[{xc, fc}], \[IndentingNewLine]Text["\<f[x]\>", 
+              Offset[{30, 16}, {x3, 
+                  f3}]]}, \[IndentingNewLine]PlotPoints \[Rule] 
+          700\[IndentingNewLine]];\)\), "\[IndentingNewLine]", 
+    \(\(Plot[
+        u[x], {x, 0.7, 
+          3}, \[IndentingNewLine]Epilog \[Rule] {PointSize[0.02], \ 
+            Point[{xa, ua}], Point[{xb, ub}], 
+            Point[{xc, uc}], \[IndentingNewLine]Text["\<f[x]\>", 
+              Offset[{30, 16}, {x3, f3}]]}];\)\), "\[IndentingNewLine]", 
+    \(\)}], "Input"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["SearchForRootsF", "Subsection"],
+
+Cell["\<\
+SearchForRootsF collects potentially three sets of roots as \
+described below and returns  Flatten[{soln1, soln2, soln3}].
+
+soln1 = ( Points where the initial samples turn out to be roots of f[x]. )
+soln2 = ( Roots found using Brent's method on f[x] where f[x] changes sign. )
+soln3 = ( Roots found using GoldenSecant method on f[x] where Abs[f[x]] has a \
+local minimum, and f[x] does not change sign.)
+
+Finding the three sets of solutions above is similar to finding the solutions \
+using SearchForRootsU above.\
+\>", "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["The roots found are screened", "Subsection"],
+
+Cell["\<\
+SearchForRootsU or SearchForRootsF returns a list of roots found.  \
+Only roots that pass the test specified by the RootTest option are returned \
+by RootSearch.\
+\>", "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Changes to Brent's method", "Subsection"],
+
+Cell[CellGroupData[{
+
+Cell["Tighter convergence check for Brent's method", "Subsubsection"],
+
+Cell[TextData[{
+  "As written by Van Wijngaarden, Dekker, and Brent the method stops when the \
+root is trapped to \nan interval (a < x < b) with (b-a) \[LessEqual] \
+(2*$MachineEpsilon+$MinMachineNumber).  I was never able to find an \
+explanation for why $MachineEpsilon is multiplied by two.  It looks to me \
+like this is done to account for the fact that the distance between machine \
+numbers has sudden jumps at some places.  For example on my computer \n{",
+  Cell[BoxData[
+      \(TraditionalForm\`\((8 - 8.882\[Cross]10\^\(-16\))\)\)]],
+  ",  8.0, ",
+  Cell[BoxData[
+      \(TraditionalForm\`\((8 + 1.776\[Cross]10\^\(-15\))\)\)]],
+  "} are three consecutive machine numbers.  The distance between machine \
+numbers always increases by a factor of 2 and only happens at powers of 2.  \
+There is one exception for machine numbers adjacent to 0.0.\n\nIn my \
+implementation I account for this using my function Ulp2 that ensures each \
+new estimated root is not a number that was previously considered as a \
+potential root.  As a result my implementation of Brent's method either finds \
+a number where f[x] is exactly 0.0 or returns one of two adjacent approximate \
+numbers where f[x] changes sign."
+}], "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Brent's method is modified to see if it's converging on a \
+pole\
+\>", "Subsubsection"],
+
+Cell["\<\
+Suppose we are trying to find a root of Tan[x] starting with \
+samples at (x=1.5) and (x=2.0).  Brent's method can be used here because \
+Tan[x] has opposite sign at the two values.  However, Brent's method will \
+slowly converge on the pole at (x = \[Pi]/2). My implementation of Brent's \
+method uses a function called PoleTest to see if Brent's method is likely \
+converging on a pole and quits early when this is the case.  For more details \
+see the comments near the implementation of PoleTest in the code.\
+\>", "Text"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["The GoldenSecant method", "Subsection"],
+
+Cell[TextData[{
+  "The GoldenSecant method keeps track of three points {x1,f1}, {x2,f2}, and \
+{x3,f3} which are used to \nselect a value newX which is the next estimate of \
+the root.  If a sample is found where f[x] changes sign Brent's method is \
+used to further refine the estimate of the root.  On each iteration newX \
+replaces either  x1 or  x3 and the points are shuffled to ensure the \
+following are true. \n   \[Bullet]   (x1<x2<x3)  or  (x3<x2<x1) \n   \
+\[Bullet]   Abs[ x2-x1 ] \[LessEqual] Abs[ x2-x3 ]\n   \[Bullet]   (",
+  Cell[BoxData[
+      \(TraditionalForm\`f2\/f1 \[LessEqual] 1\)]],
+  ") and (",
+  Cell[BoxData[
+      \(TraditionalForm\`f2\/f3 \[LessEqual] 1\)]],
+  ")\nOn each iteration a secant step using points {x1,f1} and {x2,f2} is \
+considered.  If the secant step considered is larger than Abs[x3-x2] a \
+Golden-Section find minimum step is used instead.  Also if the direction of a \
+secant step is in the opposite direction than the previous step then a \
+Golden-Section find minimum step is used if the secant step would have been \
+larger. This gives a new estimate called newX and we always ensure (newX - x2 \
+\[NotEqual] 0) and (newX - x3 \[NotEqual] 0).  In the event the algorithm is \
+converging on a local exremum the secant steps are consistently much larger \
+than Abs[x3-x2] and the algorithm will quit before reaching the maximum \
+number of iterations.  Often times the algorithm determines that a root has \
+been found once it narrows the root to the smallest possible interval for the \
+precision being used.\n\nIt's well known that the secant method converges \
+fairly efficiently, but often fails to converge. By overriding the secant \
+estimate with a Golden-Section find minimum step in some cases we can \
+guarantee that the method converges on either a local exremum or a root.  "
+}], "Text",
+  CellTags->"Golden-Secant"],
+
+Cell[CellGroupData[{
+
+Cell["An example when a secant step is used", "Subsubsection"],
+
+Cell["\<\
+The next two cells show an example where a secant step using points \
+ p1={x1, f1} and  p2={x2, f2} gives 
+newX= 2.52157 as a new estimate of the root.  This is a case where the secant \
+step gives a better approximation of the root.  In a case such as this the \
+Golden-Secant method uses the secant estimate because the new estimate is \
+inside Interval[{x2, x3}].\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(\(f[x_] := Cos[x] + 0.95\)\(\[IndentingNewLine]\)
+    \)\), "\n", 
+    \(\({x1, x2, x3} = {1.5, 1.64, 5.0};\)\), "\n", 
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)}], "Input"],
+
+Cell[BoxData[
+    \(2.5215716044124084`\)], "Output"]
+}, Open  ]],
+
+Cell[BoxData[{
+    \(\(\({f1, f2, f3} = {f[x1], f[x2], f[x3]};\)\(\[IndentingNewLine]\)
+    \)\), "\[IndentingNewLine]", 
+    \(\(Plot[f[x], {x, 0, 6}, 
+        Epilog \[Rule] {PointSize[0.02], \ Point[{x1, f1}], Point[{x2, f2}], 
+            Point[{x3, f3}], \[IndentingNewLine]Text["\<p1\>", 
+              Offset[{12, 4}, {x1, f1}]], \[IndentingNewLine]Text["\<p2\>", 
+              Offset[{12, 4}, {x2, f2}]], \[IndentingNewLine]Text["\<p3\>", 
+              Offset[{12, 0}, {x3, f3}]]\[IndentingNewLine]}];\)\)}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["An example when a secant step leads us astray", "Subsubsection"],
+
+Cell["\<\
+Suppose we are trying to find the roots between 1.495 and 4.8 of  \
+(Abs[Sin[x]]-x/10+0.313).  Further suppose we started with the initial \
+samples that the next cell displays. Based on these initial samples we would \
+be wise to look harder for a root near samples {3.095, 0.0500758}, {3.195, \
+0.046882}, and {3.295, 0.136306}.  \
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(xpnts = Range[1.495, 4.8, 0.1];\)\), "\[IndentingNewLine]", 
+    \(\(f[x_] := Abs[Sin[x]] - x/10 + 0.313;\)\), "\[IndentingNewLine]", 
+    \(\(data = Transpose[{xpnts, f /@ xpnts}];\)\), "\n", 
+    \(\(ListPlot[data];\)\), "\[IndentingNewLine]", 
+    \({{x1, f1}, {x2, f2}, {x3, f3}} = Take[data, {17, 19}]\)}], "Input"],
+
+Cell[BoxData[
+    \({{3.095`, 0.05007579761216957`}, {3.1950000000000003`, 
+        0.04688196067111555`}, {3.295`, 0.13630634404910463`}}\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+In the next cell we see that a secant step using points {x1, \
+f1}={3.095, 0.0500758} and {x2, f2}={3.195, 0.046882} gives a new approximate \
+root of 4.66289 which is well outside the interval that we suspect contains a \
+root.  In fact we already have initial samples near 4.66289 and found little \
+reason to suspect there is a root there.  In a case such as this the \
+GoldenSecant method decides the secant step was a poor approximation of the \
+root and takes a Golden-Section find minimum step instead.  So the new \
+estimate of the root is approximately  ( newX = x2+0.381966*(x3-x2) ).\
+\>", \
+"Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)], "Input"],
+
+Cell[BoxData[
+    \(4.662888359248666`\)], "Output"]
+}, Open  ]],
+
+Cell[BoxData[{
+    \(\(\({f1, f2, f3} = {f[x1], f[x2], f[x3]};\)\(\[IndentingNewLine]\)
+    \)\), "\[IndentingNewLine]", 
+    \(\(Plot[
+        f[x], {x, 3.09, 
+          3.32}, \[IndentingNewLine]AxesOrigin \[Rule] {3.09, 0}, 
+        Epilog \[Rule] {PointSize[0.02], \ Point[{x1, f1}], Point[{x2, f2}], 
+            Point[{x3, f3}], \[IndentingNewLine]Text["\<p1\>", 
+              Offset[{12, 4}, {x1, f1}]], \[IndentingNewLine]Text["\<p2\>", 
+              Offset[{\(-12\), 4}, {x2, 
+                  f2}]], \[IndentingNewLine]Text["\<p3\>", 
+              Offset[{\(-12\), 0}, {x3, 
+                  f3}]]\[IndentingNewLine]}];\)\)}], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["An example where we are converging on a local extremum", "Subsubsection"],
+
+Cell["\<\
+The next three cells show an example where my GoldenSecant method \
+is converging on a local exremum.  In a case such as this a new approximation \
+based on the secant method is far outside of Interval[{x2,x3}].  When this \
+happens on four consecutive iterations the GoldenSecant method decides it's \
+converging on a local extremum and stops trying to converge on a root. When \
+the algorithm quits for this reason the latest approximation is never \
+indicated as a root.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(\(f[x_] := Cos[x] + 1.5;\)\(\n\)
+    \)\), "\[IndentingNewLine]", 
+    \(\({x1, x2, x3} = {3.0, 3.07, 3.25};\)\), "\n", 
+    \({f1, f2, f3} = {f[x1], f[x2], f[x3]}\)}], "Input"],
+
+Cell[BoxData[
+    \({0.5100075033995546`, 0.5025616595929815`, 
+      0.5058703239194537`}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)], "Input"],
+
+Cell[BoxData[
+    \(7.794691664959824`\)], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+    \(\(Plot[f[x], {x, 2.99, 3.3}, 
+        Epilog \[Rule] {PointSize[0.02], \ Point[{x1, f1}], 
+            Point[{x2, f2}], \[IndentingNewLine]Point[{x3, 
+                f3}], \[IndentingNewLine]Text["\<p1\>", 
+              Offset[{10, 6}, {x1, f1}]], \[IndentingNewLine]Text["\<p2\>", 
+              Offset[{10, 6}, {x2, f2}]], \[IndentingNewLine]Text["\<p3\>", 
+              Offset[{8, 8}, {x3, f3}]]\[IndentingNewLine]}, 
+        PlotRange \[Rule] {{2.99, 3.3}, {0, 1}}, AspectRatio \[Rule] 1/2, 
+        Ticks \[Rule] {Automatic, {}}];\)\)], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["An example where a change of sign is detected", "Subsubsection"],
+
+Cell["\<\
+The next example shows a case where f[x] has the same sign at x1, \
+x2, and x3 and a secant step gives a new approximation inside of \
+Interval[{x2,x3}].  When f[x] is sampled at the new estimate we find that it \
+has opposite sign than it did at x1 and x2.  If f[x] is continuous over \
+Interval[{x2, x3}] there are two roots in the interval, and Brent's method \
+can normally converge on them easily.  So in a case such as this my \
+GoldenSecant method refines the approximation using Brent's method with \
+starting values {x2,  newX} and {newX, x3}.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(\(f[x_] := Cos[x - 0.2] - 0.1;\)\(\n\)
+    \)\), "\n", 
+    \(\({x1, x2, x3} = {0.4, 1.1, 6.0};\)\), "\n", 
+    \({f1, f2, f3} = {f[x1], f[x2], f[x3]}\)}], "Input"],
+
+Cell[BoxData[
+    \({0.8800665778412416`, 0.5216099682706644`, 
+      0.7855195169413189`}\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\);\)\), "\n", 
+    \({newX, f[newX]}\)}], "Input"],
+
+Cell[BoxData[
+    \({2.118608579227703`, \(-0.4408418781324325`\)}\)], "Output"]
+}, Open  ]],
+
+Cell[BoxData[
+    \(\(Plot[f[x], {x, 0, 7}, 
+        Epilog \[Rule] {PointSize[0.02], \ Point[{x1, f1}], Point[{x2, f2}], 
+            Point[{x3, f3}], \[IndentingNewLine]Text["\<p1\>", 
+              Offset[{4, 8}, {x1, f1}]], \[IndentingNewLine]Text["\<p2\>", 
+              Offset[{10, 4}, {x2, f2}]], \[IndentingNewLine]Text["\<p3\>", 
+              Offset[{\(-10\), 4}, {x3, 
+                  f3}]]\[IndentingNewLine]}];\)\)], "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["An example where we need to prevent slow convergence", "Subsubsection"],
+
+Cell["\<\
+Consider using the secant method on the following function with \
+starting values 
+(x1, x2, x3) = {-2.23, 11.9, 12.0}.  Several steps of secant iteration on \
+this example are shown below.  In this case the secant method hops back and \
+forth gradually closing in on a root. \
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\(f[x_] := 
+        If[x < 7, \((9 - x)\)^0.8, x^0.73 - 1/\((x - 7)\)];\)\), "\n", 
+    \(\({x1, x2, x3} = {\(-2.41\), \(-2.4\), 11.9};\)\), "\n", 
+    \({f1, f2, f3} = {f[x1], f[x2], f[x3]}\)}], "Input"],
+
+Cell[BoxData[
+    \({7.011783781583547`, 7.006867113028375`, 5.89338288596246`}\)], "Output"]
+}, Open  ]],
+
+Cell[BoxData[{
+    \(\(Block[{$DisplayFunction = Identity}, \[IndentingNewLine]plt1 = 
+          Plot[f[x], {x, \(-3\), 6.999999999}]; \[IndentingNewLine]plt2 = 
+          Plot[f[x], {x, 7.000000001, 13.5}]; \[IndentingNewLine]txt = 
+          Graphics[{PointSize[0.01], \ Point[{x1, f1}], Point[{x2, f2}], 
+              Point[{x3, f3}], \[IndentingNewLine]Text["\<p1\>", 
+                Offset[{\(-2\), 8}, {x1, 
+                    f1}]], \[IndentingNewLine]Text["\<p2\>", 
+                Offset[{14, 2}, {x2, f2}]], \[IndentingNewLine]Text["\<p3\>", 
+                Offset[{10, 9}, {x3, 
+                    f3}]]}];\[IndentingNewLine]];\)\), "\[IndentingNewLine]", \
+
+    \(\(Show[plt1, plt2, txt, 
+        PlotRange \[Rule] {{\(-3\), 13.5}, {\(-5\), 8}}];\)\)}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)], "Input"],
+
+Cell[BoxData[
+    \(11.851249671198724`\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\({x1, x2, x3} = {x3, newX, x2};\)\), "\[IndentingNewLine]", 
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)}], "Input"],
+
+Cell[BoxData[
+    \(\(-2.255855275195472`\)\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\({x1, x2, x3} = {x3, newX, x2};\)\), "\[IndentingNewLine]", 
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)}], "Input"],
+
+Cell[BoxData[
+    \(11.831913126219943`\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\({x1, x2, x3} = {x3, newX, x2};\)\), "\[IndentingNewLine]", 
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)}], "Input"],
+
+Cell[BoxData[
+    \(\(-2.2260011939958915`\)\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\({x1, x2, x3} = {x3, newX, x2};\)\), "\[IndentingNewLine]", 
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)}], "Input"],
+
+Cell[BoxData[
+    \(11.810229085362927`\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\({x1, x2, x3} = {x3, newX, x2};\)\), "\[IndentingNewLine]", 
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)}], "Input"],
+
+Cell[BoxData[
+    \(\(-2.2078575451924056`\)\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\({x1, x2, x3} = {x3, newX, x2};\)\), "\[IndentingNewLine]", 
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)}], "Input"],
+
+Cell[BoxData[
+    \(11.804231241857218`\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\({x1, x2, x3} = {x3, newX, x2};\)\), "\[IndentingNewLine]", 
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)}], "Input"],
+
+Cell[BoxData[
+    \(\(-2.1955718322146893`\)\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+    \(\({x1, x2, x3} = {x3, newX, x2};\)\), "\[IndentingNewLine]", 
+    \(newX = x2 - f[x2]*\((x2 - x1)\)/\((f[x2] - f[x1])\)\)}], "Input"],
+
+Cell[BoxData[
+    \(11.8004281668785`\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+To prevent slow convergence such as this my GoldenSecant algorithm \
+checks to see if the secant step is changing direction.  When the secant step \
+does change direction a Golden-Section find minimum step is taken if the \
+secant step would have been larger than a Golden-Section step which is \
+approximately  0.381966*Abs[x3-x2].\
+\>", "Text"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["References", "Subsection"],
+
+Cell["\<\
+Over several years I read everything I could find on algorithms for \
+finding roots in one dimension.  Only a few of these references directly \
+influenced the RootSearch algorithm and references to them can be found \
+above.  Nearly everything I have learned on the subject is covered in one of \
+the following.
+ \
+\>", "Text"],
+
+Cell["\<\
+G. E. Alefeld, F.A. Potra, Yixun Shi 1995, Algorithm 748: Enclosing \
+Zeros of Continuous Functions, ACM Transactions on Mathematical Software, Vol \
+21, No 3, Sept 1995, 327-344.\
+\>", "Text"],
+
+Cell["\<\
+G. E. Alefeld, F. A. Potra,Yixun Shi 1993, Mathematics of \
+Computation, Vol 61, No 204, Oct 1993, 733-744.\
+\>", "Text"],
+
+Cell["\<\
+G. E. Alefeld, F. A. Potra 1992, Some Simple Methods for Enclosing \
+Simple Zeros of Nonlinear Equations, BIT 32 (1992), 334-344.\
+\>", "Text"],
+
+Cell["\<\
+Ned Anderson, \[CapitalARing]ke Bj\[ODoubleDot]rck 1973, A New High \
+Order Method of Regula Falsi Type for Computing a Root of an Equation, BIT \
+13, 1973, 253-264.\
+\>", "Text"],
+
+Cell["\<\
+J. C. P. Bus, T. J. Dekker 1975, Two Efficient Algorithms With \
+Guaranteed Convergence for Finding a Zero of a Function, ACM Transactions on \
+Mathematical Software, Vol 1, No 4, Dec 1975, 330-345.\
+\>", "Text"],
+
+Cell["\<\
+Kendal E. Atkinson 1989, An Introduction to Numerical Analysis, 2nd \
+edition, (John Wiley & Sons).\
+\>", "Text"],
+
+Cell["\<\
+R.P.Brent 1971, An Algorithm With Guaranteed Convergence for \
+Finding a Zero of a Function, Computer Journal, vol 14 (1971), 422-425.\
+\>", \
+"Text",
+  CellTags->"Brent's paper"],
+
+Cell["\<\
+R.P.Brent 1973, Algorithms For Minimization Without Derivatives \
+(Englewood Cliffs,NJ:Prentice-Hall).\
+\>", "Text",
+  CellTags->"Brent's book"],
+
+Cell["\<\
+Carl-Erik Fr\[ODoubleDot]berg 1985, Numerical Mathematics Theory \
+and Computer Applications, (Benjamin Cummings Publishing).\
+\>", "Text"],
+
+Cell["\<\
+R. F. King 1976, Methods without Secant Steps for Finding a \
+Bracketed Root, Computing 17, 1976, 49-57.\
+\>", "Text"],
+
+Cell[TextData[{
+  "F. M. Larkin 1980, Root-Finding by Fitting Rational Functions, ",
+  StyleBox["Mathematica",
+    FontSlant->"Italic"],
+  " of Computation, Vol 35, No 151, July 1980, 803-816."
+}], "Text"],
+
+Cell["\<\
+D. Le 1985, Three New Rapidly Convergent Algorithms for Finding a \
+Zero of a Function, SIAM J. Stat Comput. 
+Vol 6, No 1, Jan 1985, 193-208.\
+\>", "Text"],
+
+Cell["\<\
+D. Le 1985, An Efficient Derivative-Free Method for Solving \
+Nonlinear Equations, ACM Transactions on Mathematical Software, Vol 11, No 3, \
+Sept 1985, 250-262.\
+\>", "Text"],
+
+Cell["\<\
+Victor Norton 1985, ALGORITHM 631 Finding a Bracketed Zero by \
+Larkin's Method of Rational Interpolation, ACM Transactions on Mathematical \
+Software, Vol 11, No 2, June 1985, 120-134.\
+\>", "Text"],
+
+Cell["\<\
+William H.Press, Saul A.Teukolsky, William T.Vetterling, Brian \
+P.Flannery 1994, Numerical Recipes in C 
+(Cambridge University Press).\
+\>", "Text",
+  CellTags->"Numerical Recipes"],
+
+Cell["\<\
+Anthony Ralston, Phillip Rabinowitz, A First Course in Numerical \
+Analysis 1978, McGraw-Hill Book Co.\
+\>", "Text"],
+
+Cell["\<\
+C. J. F. Ridders 1979, Three-Point Iterations Derived From \
+Exponential Curve Fitting, IEE Transactions on Circuits and Systems, Vol \
+CAS-26, No 8, Aug 1979, 669-670. \
+\>", "Text"],
+
+Cell["\<\
+G. W. Stewart 1993, On Infinitely Many Algorithms for Solving \
+Equations, 
+University of Maryland College Park TR-92-121, TR-2990.\
+\>", "Text",
+  CellTags->"Stewart 1993"],
+
+Cell["\<\
+J. F. Traub 1964, Iterative Methods for the Solution of Equations, \
+Pretince-Hall Inc., Englewood Cliffs NJ.\
+\>", "Text"],
+
+Cell[TextData[{
+  "Shr\[ODoubleDot]eder's Method from the MathWorld site at  ",
+  ButtonBox["http://mathworld.wolfram.com/SchroedersMethod.html",
+    ButtonData:>{
+      URL[ "http://mathworld.wolfram.com/SchroedersMethod.html"], None},
+    ButtonStyle->"Hyperlink"]
+}], "Text"],
+
+Cell[TextData[ButtonBox["http://mathworld.wolfram.com/HalleysMethod.html",
+  ButtonData:>{
+    URL[ "http://mathworld.wolfram.com/HalleysMethod.html"], None},
+  ButtonStyle->"Hyperlink"]], "Text"],
+
+Cell[TextData[ButtonBox["http://mathworld.wolfram.com/HouseholdersMethod.\
+html",
+  ButtonData:>{
+    URL[ "http://mathworld.wolfram.com/HouseholdersMethod.html"], None},
+  ButtonStyle->"Hyperlink"]], "Text"]
+}, Closed]]
+}, Closed]]
+}, Open  ]]
+},
+FrontEndVersion->"4.1 for Microsoft Windows",
+ScreenRectangle->{{0, 1024}, {0, 695}},
+WindowToolbars->"EditBar",
+WindowSize->{1016, 668},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+PrintingCopies->1,
+PrintingPageRange->{Automatic, Automatic},
+ShowSelection->True,
+Magnification->2,
+StyleDefinitions -> Notebook[{
+  
+  Cell[CellGroupData[{
+  Cell["Style Definitions", "Subtitle"],
+  
+  Cell["\<\
+Modify the definitions below to change the default appearance of \
+all cells in a given style.  Make modifications to any definition using \
+commands in the Format menu.\
+\>", "Text"],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Style Environment Names", "Section"],
+  
+  Cell[StyleData[All, "Working"],
+    PageWidth->WindowWidth,
+    CellLabelMargins->{{12, Inherited}, {Inherited, Inherited}},
+    ScriptMinSize->9],
+  
+  Cell[StyleData[All, "Presentation"],
+    PageWidth->WindowWidth,
+    CellLabelMargins->{{24, Inherited}, {Inherited, Inherited}},
+    ScriptMinSize->12],
+  
+  Cell[StyleData[All, "Condensed"],
+    PageWidth->WindowWidth,
+    CellLabelMargins->{{8, Inherited}, {Inherited, Inherited}},
+    ScriptMinSize->8],
+  
+  Cell[StyleData[All, "Printout"],
+    PageWidth->PaperWidth,
+    CellLabelMargins->{{2, Inherited}, {Inherited, Inherited}},
+    ScriptMinSize->5,
+    PrivateFontOptions->{"FontType"->"Outline"}]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Notebook Options", "Section"],
+  
+  Cell["\<\
+The options defined for the style below will be used at the \
+Notebook level.\
+\>", "Text"],
+  
+  Cell[StyleData["Notebook"],
+    PageHeaders->{{Cell[ 
+            TextData[ {
+              CounterBox[ "Page"]}], "PageNumber"], None, Cell[ 
+            TextData[ {
+              ValueBox[ "FileName"]}], "Header"]}, {Cell[ 
+            TextData[ {
+              ValueBox[ "FileName"]}], "Header"], None, Cell[ 
+            TextData[ {
+              CounterBox[ "Page"]}], "PageNumber"]}},
+    CellFrameLabelMargins->6,
+    StyleMenuListing->None]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Styles for Headings", "Section"],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Title"],
+    ShowCellBracket->False,
+    CellMargins->{{12, Inherited}, {20, 40}},
+    CellGroupingRules->{"TitleGrouping", 0},
+    PageBreakBelow->False,
+    DefaultNewInlineCellStyle->"None",
+    InputAutoReplacements->{"TeX"->StyleBox[ 
+            RowBox[ {"T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "LaTeX"->StyleBox[ 
+            RowBox[ {"L", 
+              StyleBox[ 
+                AdjustmentBox[ 
+                "A", BoxMargins -> {{-0.36, -0.1}, {0, -0}}, 
+                  BoxBaselineShift -> -0.2], FontSize -> Smaller], "T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "mma"->"Mathematica", "Mma"->"Mathematica", 
+        "MMA"->"Mathematica", Inherited},
+    LineSpacing->{1, 11},
+    LanguageCategory->"NaturalLanguage",
+    CounterIncrements->"Title",
+    CounterAssignments->{{"Section", 0}, {"Equation", 0}, {"Figure", 0}, {
+        "Subtitle", 0}, {"Subsubtitle", 0}},
+    FontFamily->"Helvetica",
+    FontSize->36,
+    FontWeight->"Bold"],
+  
+  Cell[StyleData["Title", "Presentation"],
+    CellMargins->{{24, 10}, {20, 40}},
+    LineSpacing->{1, 0},
+    FontSize->44],
+  
+  Cell[StyleData["Title", "Condensed"],
+    CellMargins->{{8, 10}, {4, 8}},
+    FontSize->20],
+  
+  Cell[StyleData["Title", "Printout"],
+    CellMargins->{{2, 10}, {12, 30}},
+    FontSize->24]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Subtitle"],
+    CellMargins->{{12, Inherited}, {20, 15}},
+    CellGroupingRules->{"TitleGrouping", 10},
+    PageBreakBelow->False,
+    DefaultNewInlineCellStyle->"None",
+    InputAutoReplacements->{"TeX"->StyleBox[ 
+            RowBox[ {"T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "LaTeX"->StyleBox[ 
+            RowBox[ {"L", 
+              StyleBox[ 
+                AdjustmentBox[ 
+                "A", BoxMargins -> {{-0.36, -0.1}, {0, -0}}, 
+                  BoxBaselineShift -> -0.2], FontSize -> Smaller], "T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "mma"->"Mathematica", "Mma"->"Mathematica", 
+        "MMA"->"Mathematica", Inherited},
+    LanguageCategory->"NaturalLanguage",
+    CounterIncrements->"Subtitle",
+    CounterAssignments->{{"Section", 0}, {"Equation", 0}, {"Figure", 0}, {
+        "Subsubtitle", 0}},
+    FontFamily->"Helvetica",
+    FontSize->24],
+  
+  Cell[StyleData["Subtitle", "Presentation"],
+    CellMargins->{{24, 10}, {20, 20}},
+    LineSpacing->{1, 0},
+    FontSize->36],
+  
+  Cell[StyleData["Subtitle", "Condensed"],
+    CellMargins->{{8, 10}, {4, 4}},
+    FontSize->14],
+  
+  Cell[StyleData["Subtitle", "Printout"],
+    CellMargins->{{2, 10}, {12, 8}},
+    FontSize->18]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Subsubtitle"],
+    CellMargins->{{12, Inherited}, {20, 15}},
+    CellGroupingRules->{"TitleGrouping", 20},
+    PageBreakBelow->False,
+    DefaultNewInlineCellStyle->"None",
+    InputAutoReplacements->{"TeX"->StyleBox[ 
+            RowBox[ {"T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "LaTeX"->StyleBox[ 
+            RowBox[ {"L", 
+              StyleBox[ 
+                AdjustmentBox[ 
+                "A", BoxMargins -> {{-0.36, -0.1}, {0, -0}}, 
+                  BoxBaselineShift -> -0.2], FontSize -> Smaller], "T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "mma"->"Mathematica", "Mma"->"Mathematica", 
+        "MMA"->"Mathematica", Inherited},
+    LanguageCategory->"NaturalLanguage",
+    CounterIncrements->"Subsubtitle",
+    CounterAssignments->{{"Section", 0}, {"Equation", 0}, {"Figure", 0}},
+    FontFamily->"Helvetica",
+    FontSize->14,
+    FontSlant->"Italic"],
+  
+  Cell[StyleData["Subsubtitle", "Presentation"],
+    CellMargins->{{24, 10}, {20, 20}},
+    LineSpacing->{1, 0},
+    FontSize->24],
+  
+  Cell[StyleData["Subsubtitle", "Condensed"],
+    CellMargins->{{8, 10}, {8, 8}},
+    FontSize->12],
+  
+  Cell[StyleData["Subsubtitle", "Printout"],
+    CellMargins->{{2, 10}, {12, 8}},
+    FontSize->14]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Section"],
+    CellFrame->{{0, 0}, {0, 2.5}},
+    CellDingbat->None,
+    ShowGroupOpenCloseIcon->True,
+    CellMargins->{{25, Inherited}, {8, 24}},
+    CellGroupingRules->{"SectionGrouping", 30},
+    PageBreakBelow->False,
+    DefaultNewInlineCellStyle->"None",
+    InputAutoReplacements->{"TeX"->StyleBox[ 
+            RowBox[ {"T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "LaTeX"->StyleBox[ 
+            RowBox[ {"L", 
+              StyleBox[ 
+                AdjustmentBox[ 
+                "A", BoxMargins -> {{-0.36, -0.1}, {0, -0}}, 
+                  BoxBaselineShift -> -0.2], FontSize -> Smaller], "T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "mma"->"Mathematica", "Mma"->"Mathematica", 
+        "MMA"->"Mathematica", Inherited},
+    LineSpacing->{1, 7},
+    LanguageCategory->"NaturalLanguage",
+    CounterIncrements->"Section",
+    CounterAssignments->{{"Subsection", 0}, {"Subsubsection", 0}},
+    FontFamily->"Helvetica",
+    FontSize->16,
+    FontWeight->"Bold",
+    Background->GrayLevel[0.907195]],
+  
+  Cell[StyleData["Section", "Presentation"],
+    CellMargins->{{40, 10}, {11, 32}},
+    LineSpacing->{1, 0},
+    FontSize->24],
+  
+  Cell[StyleData["Section", "Condensed"],
+    CellMargins->{{18, Inherited}, {6, 12}},
+    FontSize->12],
+  
+  Cell[StyleData["Section", "Printout"],
+    CellMargins->{{13, 0}, {7, 22}},
+    FontSize->14]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Subsection"],
+    CellFrame->{{0, 0}, {0, 1.5}},
+    CellDingbat->None,
+    ShowGroupOpenCloseIcon->True,
+    CellMargins->{{22, Inherited}, {8, 20}},
+    CellGroupingRules->{"SectionGrouping", 40},
+    PageBreakBelow->False,
+    DefaultNewInlineCellStyle->"None",
+    InputAutoReplacements->{"TeX"->StyleBox[ 
+            RowBox[ {"T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "LaTeX"->StyleBox[ 
+            RowBox[ {"L", 
+              StyleBox[ 
+                AdjustmentBox[ 
+                "A", BoxMargins -> {{-0.36, -0.1}, {0, -0}}, 
+                  BoxBaselineShift -> -0.2], FontSize -> Smaller], "T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "mma"->"Mathematica", "Mma"->"Mathematica", 
+        "MMA"->"Mathematica", Inherited},
+    LanguageCategory->"NaturalLanguage",
+    CounterIncrements->"Subsection",
+    CounterAssignments->{{"Subsubsection", 0}},
+    FontFamily->"Times",
+    FontSize->14,
+    FontWeight->"Bold",
+    Background->None],
+  
+  Cell[StyleData["Subsection", "Presentation"],
+    CellMargins->{{36, 10}, {11, 32}},
+    LineSpacing->{1, 0},
+    FontSize->22],
+  
+  Cell[StyleData["Subsection", "Condensed"],
+    CellMargins->{{16, Inherited}, {6, 12}},
+    FontSize->12],
+  
+  Cell[StyleData["Subsection", "Printout"],
+    CellMargins->{{9, 0}, {7, 22}},
+    FontSize->12]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Subsubsection"],
+    CellFrame->{{0, 0}, {0, 1}},
+    CellDingbat->None,
+    ShowGroupOpenCloseIcon->True,
+    CellMargins->{{22, Inherited}, {8, 18}},
+    CellGroupingRules->{"SectionGrouping", 50},
+    PageBreakBelow->False,
+    CellFrameColor->GrayLevel[0],
+    DefaultNewInlineCellStyle->"None",
+    InputAutoReplacements->{"TeX"->StyleBox[ 
+            RowBox[ {"T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "LaTeX"->StyleBox[ 
+            RowBox[ {"L", 
+              StyleBox[ 
+                AdjustmentBox[ 
+                "A", BoxMargins -> {{-0.36, -0.1}, {0, -0}}, 
+                  BoxBaselineShift -> -0.2], FontSize -> Smaller], "T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "mma"->"Mathematica", "Mma"->"Mathematica", 
+        "MMA"->"Mathematica", Inherited},
+    LanguageCategory->"NaturalLanguage",
+    CounterIncrements->"Subsubsection",
+    FontFamily->"Times",
+    FontWeight->"Bold"],
+  
+  Cell[StyleData["Subsubsection", "Presentation"],
+    CellMargins->{{34, 10}, {11, 26}},
+    LineSpacing->{1, 0},
+    FontSize->18],
+  
+  Cell[StyleData["Subsubsection", "Condensed"],
+    CellMargins->{{17, Inherited}, {6, 12}},
+    FontSize->10],
+  
+  Cell[StyleData["Subsubsection", "Printout"],
+    CellMargins->{{9, 0}, {7, 14}},
+    FontSize->11]
+  }, Closed]]
+  }, Open  ]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Styles for Body Text", "Section"],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Text"],
+    CellMargins->{{12, 10}, {7, 7}},
+    InputAutoReplacements->{"TeX"->StyleBox[ 
+            RowBox[ {"T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "LaTeX"->StyleBox[ 
+            RowBox[ {"L", 
+              StyleBox[ 
+                AdjustmentBox[ 
+                "A", BoxMargins -> {{-0.36, -0.1}, {0, -0}}, 
+                  BoxBaselineShift -> -0.2], FontSize -> Smaller], "T", 
+              AdjustmentBox[ 
+              "E", BoxMargins -> {{-0.075, -0.085}, {0, 0}}, BoxBaselineShift -> 
+                0.5], "X"}]], "mma"->"Mathematica", "Mma"->"Mathematica", 
+        "MMA"->"Mathematica", Inherited},
+    Hyphenation->True,
+    LineSpacing->{1, 3},
+    CounterIncrements->"Text"],
+  
+  Cell[StyleData["Text", "Presentation"],
+    CellMargins->{{24, 10}, {10, 10}},
+    LineSpacing->{1, 5},
+    FontSize->16],
+  
+  Cell[StyleData["Text", "Condensed"],
+    CellMargins->{{8, 10}, {6, 6}},
+    LineSpacing->{1, 1},
+    FontSize->11],
+  
+  Cell[StyleData["Text", "Printout"],
+    CellMargins->{{2, 2}, {6, 6}},
+    TextJustification->0.5,
+    FontSize->10]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["SmallText"],
+    CellMargins->{{12, 10}, {6, 6}},
+    DefaultNewInlineCellStyle->"None",
+    Hyphenation->True,
+    LineSpacing->{1, 3},
+    LanguageCategory->"NaturalLanguage",
+    CounterIncrements->"SmallText",
+    FontFamily->"Helvetica",
+    FontSize->9],
+  
+  Cell[StyleData["SmallText", "Presentation"],
+    CellMargins->{{24, 10}, {8, 8}},
+    LineSpacing->{1, 5},
+    FontSize->12],
+  
+  Cell[StyleData["SmallText", "Condensed"],
+    CellMargins->{{8, 10}, {5, 5}},
+    LineSpacing->{1, 2},
+    FontSize->9],
+  
+  Cell[StyleData["SmallText", "Printout"],
+    CellMargins->{{2, 2}, {5, 5}},
+    TextJustification->0.5,
+    FontSize->7]
+  }, Closed]]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Styles for Input/Output", "Section"],
+  
+  Cell["\<\
+The cells in this section define styles used for input and output \
+to the kernel.  Be careful when modifying, renaming, or removing these \
+styles, because the front end associates special meanings with these style \
+names. Some attributes for these styles are actually set in FormatType Styles \
+(in the last section of this stylesheet). \
+\>", "Text"],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Input"],
+    CellMargins->{{45, 10}, {5, 7}},
+    Evaluatable->True,
+    CellGroupingRules->"InputGrouping",
+    CellHorizontalScrolling->True,
+    PageBreakWithin->False,
+    GroupPageBreakWithin->False,
+    DefaultFormatType->DefaultInputFormatType,
+    HyphenationOptions->{"HyphenationCharacter"->"\[Continuation]"},
+    AutoItalicWords->{},
+    LanguageCategory->"Mathematica",
+    FormatType->InputForm,
+    ShowStringCharacters->True,
+    NumberMarks->True,
+    LinebreakAdjustments->{0.85, 2, 10, 0, 1},
+    CounterIncrements->"Input",
+    FontWeight->"Bold"],
+  
+  Cell[StyleData["Input", "Presentation"],
+    CellMargins->{{72, Inherited}, {8, 10}},
+    LineSpacing->{1, 0},
+    FontSize->16],
+  
+  Cell[StyleData["Input", "Condensed"],
+    CellMargins->{{40, 10}, {2, 3}},
+    FontSize->11],
+  
+  Cell[StyleData["Input", "Printout"],
+    CellMargins->{{39, 0}, {4, 6}},
+    LinebreakAdjustments->{0.85, 2, 10, 1, 1},
+    FontSize->9]
+  }, Closed]],
+  
+  Cell[StyleData["InputOnly"],
+    Evaluatable->True,
+    CellGroupingRules->"InputGrouping",
+    CellHorizontalScrolling->True,
+    DefaultFormatType->DefaultInputFormatType,
+    HyphenationOptions->{"HyphenationCharacter"->"\[Continuation]"},
+    AutoItalicWords->{},
+    LanguageCategory->"Mathematica",
+    FormatType->InputForm,
+    ShowStringCharacters->True,
+    NumberMarks->True,
+    LinebreakAdjustments->{0.85, 2, 10, 0, 1},
+    CounterIncrements->"Input",
+    StyleMenuListing->None,
+    FontWeight->"Bold"],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Output"],
+    CellMargins->{{47, 10}, {7, 5}},
+    CellEditDuplicate->True,
+    CellGroupingRules->"OutputGrouping",
+    CellHorizontalScrolling->True,
+    PageBreakWithin->False,
+    GroupPageBreakWithin->False,
+    GeneratedCell->True,
+    CellAutoOverwrite->True,
+    DefaultFormatType->DefaultOutputFormatType,
+    HyphenationOptions->{"HyphenationCharacter"->"\[Continuation]"},
+    AutoItalicWords->{},
+    LanguageCategory->None,
+    FormatType->InputForm,
+    CounterIncrements->"Output"],
+  
+  Cell[StyleData["Output", "Presentation"],
+    CellMargins->{{72, Inherited}, {10, 8}},
+    LineSpacing->{1, 0},
+    FontSize->16],
+  
+  Cell[StyleData["Output", "Condensed"],
+    CellMargins->{{41, Inherited}, {3, 2}},
+    FontSize->11],
+  
+  Cell[StyleData["Output", "Printout"],
+    CellMargins->{{39, 0}, {6, 4}},
+    FontSize->9]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Message"],
+    CellMargins->{{45, Inherited}, {Inherited, Inherited}},
+    CellGroupingRules->"OutputGrouping",
+    PageBreakWithin->False,
+    GroupPageBreakWithin->False,
+    GeneratedCell->True,
+    CellAutoOverwrite->True,
+    ShowCellLabel->False,
+    DefaultFormatType->DefaultOutputFormatType,
+    HyphenationOptions->{"HyphenationCharacter"->"\[Continuation]"},
+    AutoItalicWords->{},
+    LanguageCategory->None,
+    FormatType->InputForm,
+    CounterIncrements->"Message",
+    StyleMenuListing->None,
+    FontSize->11,
+    FontColor->RGBColor[0, 0, 1]],
+  
+  Cell[StyleData["Message", "Presentation"],
+    CellMargins->{{72, Inherited}, {Inherited, Inherited}},
+    LineSpacing->{1, 0},
+    FontSize->16],
+  
+  Cell[StyleData["Message", "Condensed"],
+    CellMargins->{{41, Inherited}, {Inherited, Inherited}},
+    FontSize->11],
+  
+  Cell[StyleData["Message", "Printout"],
+    CellMargins->{{39, Inherited}, {Inherited, Inherited}},
+    FontSize->7,
+    FontColor->GrayLevel[0]]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Print"],
+    CellMargins->{{45, Inherited}, {Inherited, Inherited}},
+    CellGroupingRules->"OutputGrouping",
+    CellHorizontalScrolling->True,
+    PageBreakWithin->False,
+    GroupPageBreakWithin->False,
+    GeneratedCell->True,
+    CellAutoOverwrite->True,
+    ShowCellLabel->False,
+    DefaultFormatType->DefaultOutputFormatType,
+    HyphenationOptions->{"HyphenationCharacter"->"\[Continuation]"},
+    AutoItalicWords->{},
+    LanguageCategory->None,
+    FormatType->InputForm,
+    CounterIncrements->"Print",
+    StyleMenuListing->None],
+  
+  Cell[StyleData["Print", "Presentation"],
+    CellMargins->{{72, Inherited}, {Inherited, Inherited}},
+    LineSpacing->{1, 0},
+    FontSize->16],
+  
+  Cell[StyleData["Print", "Condensed"],
+    CellMargins->{{41, Inherited}, {Inherited, Inherited}},
+    FontSize->11],
+  
+  Cell[StyleData["Print", "Printout"],
+    CellMargins->{{39, Inherited}, {Inherited, Inherited}},
+    FontSize->8]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Graphics"],
+    CellMargins->{{4, Inherited}, {Inherited, Inherited}},
+    CellGroupingRules->"GraphicsGrouping",
+    CellHorizontalScrolling->True,
+    PageBreakWithin->False,
+    GeneratedCell->True,
+    CellAutoOverwrite->True,
+    ShowCellLabel->False,
+    DefaultFormatType->DefaultOutputFormatType,
+    LanguageCategory->None,
+    FormatType->InputForm,
+    CounterIncrements->"Graphics",
+    ImageMargins->{{43, Inherited}, {Inherited, 0}},
+    StyleMenuListing->None,
+    FontFamily->"Courier",
+    FontSize->10],
+  
+  Cell[StyleData["Graphics", "Presentation"],
+    ImageMargins->{{62, Inherited}, {Inherited, 0}}],
+  
+  Cell[StyleData["Graphics", "Condensed"],
+    ImageMargins->{{38, Inherited}, {Inherited, 0}},
+    Magnification->0.6],
+  
+  Cell[StyleData["Graphics", "Printout"],
+    ImageMargins->{{30, Inherited}, {Inherited, 0}},
+    Magnification->0.8]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["CellLabel"],
+    LanguageCategory->None,
+    StyleMenuListing->None,
+    FontFamily->"Helvetica",
+    FontSize->9,
+    FontColor->RGBColor[0, 0, 1]],
+  
+  Cell[StyleData["CellLabel", "Presentation"],
+    FontSize->12],
+  
+  Cell[StyleData["CellLabel", "Condensed"],
+    FontSize->9],
+  
+  Cell[StyleData["CellLabel", "Printout"],
+    FontFamily->"Courier",
+    FontSize->8,
+    FontSlant->"Italic",
+    FontColor->GrayLevel[0]]
+  }, Closed]]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Inline Formatting", "Section"],
+  
+  Cell["\<\
+These styles are for modifying individual words or letters in a \
+cell exclusive of the cell tag.\
+\>", "Text"],
+  
+  Cell[StyleData["RM"],
+    StyleMenuListing->None,
+    FontWeight->"Plain",
+    FontSlant->"Plain"],
+  
+  Cell[StyleData["BF"],
+    StyleMenuListing->None,
+    FontWeight->"Bold"],
+  
+  Cell[StyleData["IT"],
+    StyleMenuListing->None,
+    FontSlant->"Italic"],
+  
+  Cell[StyleData["TR"],
+    StyleMenuListing->None,
+    FontFamily->"Times",
+    FontWeight->"Plain",
+    FontSlant->"Plain"],
+  
+  Cell[StyleData["TI"],
+    StyleMenuListing->None,
+    FontFamily->"Times",
+    FontWeight->"Plain",
+    FontSlant->"Italic"],
+  
+  Cell[StyleData["TB"],
+    StyleMenuListing->None,
+    FontFamily->"Times",
+    FontWeight->"Bold",
+    FontSlant->"Plain"],
+  
+  Cell[StyleData["TBI"],
+    StyleMenuListing->None,
+    FontFamily->"Times",
+    FontWeight->"Bold",
+    FontSlant->"Italic"],
+  
+  Cell[StyleData["MR"],
+    HyphenationOptions->{"HyphenationCharacter"->"\[Continuation]"},
+    StyleMenuListing->None,
+    FontFamily->"Courier",
+    FontWeight->"Plain",
+    FontSlant->"Plain"],
+  
+  Cell[StyleData["MO"],
+    HyphenationOptions->{"HyphenationCharacter"->"\[Continuation]"},
+    StyleMenuListing->None,
+    FontFamily->"Courier",
+    FontWeight->"Plain",
+    FontSlant->"Italic"],
+  
+  Cell[StyleData["MB"],
+    HyphenationOptions->{"HyphenationCharacter"->"\[Continuation]"},
+    StyleMenuListing->None,
+    FontFamily->"Courier",
+    FontWeight->"Bold",
+    FontSlant->"Plain"],
+  
+  Cell[StyleData["MBO"],
+    HyphenationOptions->{"HyphenationCharacter"->"\[Continuation]"},
+    StyleMenuListing->None,
+    FontFamily->"Courier",
+    FontWeight->"Bold",
+    FontSlant->"Italic"],
+  
+  Cell[StyleData["SR"],
+    StyleMenuListing->None,
+    FontFamily->"Helvetica",
+    FontWeight->"Plain",
+    FontSlant->"Plain"],
+  
+  Cell[StyleData["SO"],
+    StyleMenuListing->None,
+    FontFamily->"Helvetica",
+    FontWeight->"Plain",
+    FontSlant->"Italic"],
+  
+  Cell[StyleData["SB"],
+    StyleMenuListing->None,
+    FontFamily->"Helvetica",
+    FontWeight->"Bold",
+    FontSlant->"Plain"],
+  
+  Cell[StyleData["SBO"],
+    StyleMenuListing->None,
+    FontFamily->"Helvetica",
+    FontWeight->"Bold",
+    FontSlant->"Italic"],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["SO10"],
+    StyleMenuListing->None,
+    FontFamily->"Helvetica",
+    FontSize->10,
+    FontWeight->"Plain",
+    FontSlant->"Italic"],
+  
+  Cell[StyleData["SO10", "Printout"],
+    StyleMenuListing->None,
+    FontFamily->"Helvetica",
+    FontSize->7,
+    FontWeight->"Plain",
+    FontSlant->"Italic"],
+  
+  Cell[StyleData["SO10", "EnhancedPrintout"],
+    StyleMenuListing->None,
+    FontFamily->"Futura",
+    FontSize->7,
+    FontWeight->"Plain",
+    FontSlant->"Italic"]
+  }, Closed]]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Formulas and Programming", "Section"],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["InlineFormula"],
+    CellMargins->{{10, 4}, {0, 8}},
+    CellHorizontalScrolling->True,
+    HyphenationOptions->{"HyphenationCharacter"->"\[Continuation]"},
+    LanguageCategory->"Formula",
+    ScriptLevel->1,
+    SingleLetterItalics->True],
+  
+  Cell[StyleData["InlineFormula", "Presentation"],
+    CellMargins->{{24, 10}, {10, 10}},
+    LineSpacing->{1, 5},
+    FontSize->16],
+  
+  Cell[StyleData["InlineFormula", "Condensed"],
+    CellMargins->{{8, 10}, {6, 6}},
+    LineSpacing->{1, 1},
+    FontSize->11],
+  
+  Cell[StyleData["InlineFormula", "Printout"],
+    CellMargins->{{2, 0}, {6, 6}},
+    FontSize->10]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["DisplayFormula"],
+    CellMargins->{{42, Inherited}, {Inherited, Inherited}},
+    CellHorizontalScrolling->True,
+    DefaultFormatType->DefaultInputFormatType,
+    HyphenationOptions->{"HyphenationCharacter"->"\[Continuation]"},
+    LanguageCategory->"Formula",
+    ScriptLevel->0,
+    SingleLetterItalics->True,
+    UnderoverscriptBoxOptions->{LimitsPositioning->True}],
+  
+  Cell[StyleData["DisplayFormula", "Presentation"],
+    LineSpacing->{1, 5},
+    FontSize->16],
+  
+  Cell[StyleData["DisplayFormula", "Condensed"],
+    LineSpacing->{1, 1},
+    FontSize->11],
+  
+  Cell[StyleData["DisplayFormula", "Printout"],
+    FontSize->10]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Program"],
+    CellFrame->{{0, 0}, {0.5, 0.5}},
+    CellMargins->{{10, 4}, {0, 8}},
+    CellHorizontalScrolling->True,
+    Hyphenation->False,
+    LanguageCategory->"Formula",
+    ScriptLevel->1,
+    FontFamily->"Courier"],
+  
+  Cell[StyleData["Program", "Presentation"],
+    CellMargins->{{24, 10}, {10, 10}},
+    LineSpacing->{1, 5},
+    FontSize->16],
+  
+  Cell[StyleData["Program", "Condensed"],
+    CellMargins->{{8, 10}, {6, 6}},
+    LineSpacing->{1, 1},
+    FontSize->11],
+  
+  Cell[StyleData["Program", "Printout"],
+    CellMargins->{{2, 0}, {6, 6}},
+    FontSize->9]
+  }, Closed]]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Outline Styles", "Section"],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Outline1"],
+    CellMargins->{{12, 10}, {7, 7}},
+    CellGroupingRules->{"SectionGrouping", 50},
+    ParagraphIndent->-38,
+    CounterIncrements->"Outline1",
+    FontSize->18,
+    FontWeight->"Bold",
+    CounterBoxOptions->{CounterFunction:>CapitalRomanNumeral}],
+  
+  Cell[StyleData["Outline1", "Printout"],
+    CounterBoxOptions->{CounterFunction:>CapitalRomanNumeral}]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Outline2"],
+    CellMargins->{{59, 10}, {7, 7}},
+    CellGroupingRules->{"SectionGrouping", 60},
+    ParagraphIndent->-27,
+    CounterIncrements->"Outline2",
+    FontSize->15,
+    FontWeight->"Bold",
+    CounterBoxOptions->{CounterFunction:>(Part[ 
+        CharacterRange[ "A", "Z"], #]&)}],
+  
+  Cell[StyleData["Outline2", "Printout"],
+    CounterBoxOptions->{CounterFunction:>(Part[ 
+        CharacterRange[ "A", "Z"], #]&)}]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Outline3"],
+    CellMargins->{{108, 10}, {7, 7}},
+    CellGroupingRules->{"SectionGrouping", 70},
+    ParagraphIndent->-21,
+    CounterIncrements->"Outline3",
+    FontSize->12,
+    CounterBoxOptions->{CounterFunction:>Identity}],
+  
+  Cell[StyleData["Outline3", "Printout"],
+    CounterBoxOptions->{CounterFunction:>Identity}]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Outline4"],
+    CellMargins->{{158, 10}, {7, 7}},
+    CellGroupingRules->{"SectionGrouping", 80},
+    ParagraphIndent->-18,
+    CounterIncrements->"Outline4",
+    FontSize->10,
+    CounterBoxOptions->{CounterFunction:>(Part[ 
+        CharacterRange[ "a", "z"], #]&)}],
+  
+  Cell[StyleData["Outline4", "Printout"]]
+  }, Closed]]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Hyperlink Styles", "Section"],
+  
+  Cell["\<\
+The cells below define styles useful for making hypertext \
+ButtonBoxes.  The \"Hyperlink\" style is for links within the same Notebook, \
+or between Notebooks.\
+\>", "Text"],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Hyperlink"],
+    StyleMenuListing->None,
+    ButtonStyleMenuListing->Automatic,
+    FontColor->RGBColor[0, 0, 1],
+    FontVariations->{"Underline"->True},
+    ButtonBoxOptions->{ButtonFunction:>(FrontEndExecute[ {
+        FrontEnd`NotebookLocate[ #2]}]&),
+    Active->True,
+    ButtonNote->ButtonData}],
+  
+  Cell[StyleData["Hyperlink", "Presentation"],
+    FontSize->16],
+  
+  Cell[StyleData["Hyperlink", "Condensed"],
+    FontSize->11],
+  
+  Cell[StyleData["Hyperlink", "Printout"],
+    FontSize->10,
+    FontColor->GrayLevel[0],
+    FontVariations->{"Underline"->False}]
+  }, Closed]],
+  
+  Cell["\<\
+The following styles are for linking automatically to the on-line \
+help system.\
+\>", "Text"],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["MainBookLink"],
+    StyleMenuListing->None,
+    ButtonStyleMenuListing->Automatic,
+    FontColor->RGBColor[0, 0, 1],
+    FontVariations->{"Underline"->True},
+    ButtonBoxOptions->{ButtonFunction:>(FrontEndExecute[ {
+        FrontEnd`HelpBrowserLookup[ "MainBook", #]}]&),
+    Active->True,
+    ButtonFrame->"None"}],
+  
+  Cell[StyleData["MainBookLink", "Presentation"],
+    FontSize->16],
+  
+  Cell[StyleData["MainBookLink", "Condensed"],
+    FontSize->11],
+  
+  Cell[StyleData["MainBookLink", "Printout"],
+    FontSize->10,
+    FontColor->GrayLevel[0],
+    FontVariations->{"Underline"->False}]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["AddOnsLink"],
+    StyleMenuListing->None,
+    ButtonStyleMenuListing->Automatic,
+    FontFamily->"Courier",
+    FontColor->RGBColor[0, 0, 1],
+    FontVariations->{"Underline"->True},
+    ButtonBoxOptions->{ButtonFunction:>(FrontEndExecute[ {
+        FrontEnd`HelpBrowserLookup[ "AddOns", #]}]&),
+    Active->True,
+    ButtonFrame->"None"}],
+  
+  Cell[StyleData["AddOnsLink", "Presentation"],
+    FontSize->16],
+  
+  Cell[StyleData["AddOnsLink", "Condensed"],
+    FontSize->11],
+  
+  Cell[StyleData["AddOnsLink", "Printout"],
+    FontSize->10,
+    FontColor->GrayLevel[0],
+    FontVariations->{"Underline"->False}]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["RefGuideLink"],
+    StyleMenuListing->None,
+    ButtonStyleMenuListing->Automatic,
+    FontFamily->"Courier",
+    FontColor->RGBColor[0, 0, 1],
+    FontVariations->{"Underline"->True},
+    ButtonBoxOptions->{ButtonFunction:>(FrontEndExecute[ {
+        FrontEnd`HelpBrowserLookup[ "RefGuide", #]}]&),
+    Active->True,
+    ButtonFrame->"None"}],
+  
+  Cell[StyleData["RefGuideLink", "Presentation"],
+    FontSize->16],
+  
+  Cell[StyleData["RefGuideLink", "Condensed"],
+    FontSize->11],
+  
+  Cell[StyleData["RefGuideLink", "Printout"],
+    FontSize->10,
+    FontColor->GrayLevel[0],
+    FontVariations->{"Underline"->False}]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["GettingStartedLink"],
+    StyleMenuListing->None,
+    ButtonStyleMenuListing->Automatic,
+    FontColor->RGBColor[0, 0, 1],
+    FontVariations->{"Underline"->True},
+    ButtonBoxOptions->{ButtonFunction:>(FrontEndExecute[ {
+        FrontEnd`HelpBrowserLookup[ "GettingStarted", #]}]&),
+    Active->True,
+    ButtonFrame->"None"}],
+  
+  Cell[StyleData["GettingStartedLink", "Presentation"],
+    FontSize->16],
+  
+  Cell[StyleData["GettingStartedLink", "Condensed"],
+    FontSize->11],
+  
+  Cell[StyleData["GettingStartedLink", "Printout"],
+    FontSize->10,
+    FontColor->GrayLevel[0],
+    FontVariations->{"Underline"->False}]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["OtherInformationLink"],
+    StyleMenuListing->None,
+    ButtonStyleMenuListing->Automatic,
+    FontColor->RGBColor[0, 0, 1],
+    FontVariations->{"Underline"->True},
+    ButtonBoxOptions->{ButtonFunction:>(FrontEndExecute[ {
+        FrontEnd`HelpBrowserLookup[ "OtherInformation", #]}]&),
+    Active->True,
+    ButtonFrame->"None"}],
+  
+  Cell[StyleData["OtherInformationLink", "Presentation"],
+    FontSize->16],
+  
+  Cell[StyleData["OtherInformationLink", "Condensed"],
+    FontSize->11],
+  
+  Cell[StyleData["OtherInformationLink", "Printout"],
+    FontSize->10,
+    FontColor->GrayLevel[0],
+    FontVariations->{"Underline"->False}]
+  }, Closed]]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Styles for Headers and Footers", "Section"],
+  
+  Cell[StyleData["Header"],
+    CellMargins->{{0, 0}, {4, 1}},
+    DefaultNewInlineCellStyle->"None",
+    LanguageCategory->"NaturalLanguage",
+    StyleMenuListing->None,
+    FontSize->10,
+    FontSlant->"Italic"],
+  
+  Cell[StyleData["Footer"],
+    CellMargins->{{0, 0}, {0, 4}},
+    DefaultNewInlineCellStyle->"None",
+    LanguageCategory->"NaturalLanguage",
+    StyleMenuListing->None,
+    FontSize->9,
+    FontSlant->"Italic"],
+  
+  Cell[StyleData["PageNumber"],
+    CellMargins->{{0, 0}, {4, 1}},
+    StyleMenuListing->None,
+    FontFamily->"Times",
+    FontSize->10]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Palette Styles", "Section"],
+  
+  Cell["\<\
+The cells below define styles that define standard \
+ButtonFunctions, for use in palette buttons.\
+\>", "Text"],
+  
+  Cell[StyleData["Paste"],
+    StyleMenuListing->None,
+    ButtonStyleMenuListing->Automatic,
+    ButtonBoxOptions->{ButtonFunction:>(FrontEndExecute[ {
+        FrontEnd`NotebookApply[ 
+          FrontEnd`InputNotebook[ ], #, After]}]&)}],
+  
+  Cell[StyleData["Evaluate"],
+    StyleMenuListing->None,
+    ButtonStyleMenuListing->Automatic,
+    ButtonBoxOptions->{ButtonFunction:>(FrontEndExecute[ {
+        FrontEnd`NotebookApply[ 
+          FrontEnd`InputNotebook[ ], #, All], 
+        SelectionEvaluate[ 
+          FrontEnd`InputNotebook[ ], All]}]&)}],
+  
+  Cell[StyleData["EvaluateCell"],
+    StyleMenuListing->None,
+    ButtonStyleMenuListing->Automatic,
+    ButtonBoxOptions->{ButtonFunction:>(FrontEndExecute[ {
+        FrontEnd`NotebookApply[ 
+          FrontEnd`InputNotebook[ ], #, All], 
+        FrontEnd`SelectionMove[ 
+          FrontEnd`InputNotebook[ ], All, Cell, 1], 
+        FrontEnd`SelectionEvaluateCreateCell[ 
+          FrontEnd`InputNotebook[ ], All]}]&)}],
+  
+  Cell[StyleData["CopyEvaluate"],
+    StyleMenuListing->None,
+    ButtonStyleMenuListing->Automatic,
+    ButtonBoxOptions->{ButtonFunction:>(FrontEndExecute[ {
+        FrontEnd`SelectionCreateCell[ 
+          FrontEnd`InputNotebook[ ], All], 
+        FrontEnd`NotebookApply[ 
+          FrontEnd`InputNotebook[ ], #, All], 
+        FrontEnd`SelectionEvaluate[ 
+          FrontEnd`InputNotebook[ ], All]}]&)}],
+  
+  Cell[StyleData["CopyEvaluateCell"],
+    StyleMenuListing->None,
+    ButtonStyleMenuListing->Automatic,
+    ButtonBoxOptions->{ButtonFunction:>(FrontEndExecute[ {
+        FrontEnd`SelectionCreateCell[ 
+          FrontEnd`InputNotebook[ ], All], 
+        FrontEnd`NotebookApply[ 
+          FrontEnd`InputNotebook[ ], #, All], 
+        FrontEnd`SelectionEvaluateCreateCell[ 
+          FrontEnd`InputNotebook[ ], All]}]&)}]
+  }, Open  ]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Placeholder Styles", "Section"],
+  
+  Cell["\<\
+The cells below define styles useful for making placeholder \
+objects in palette templates.\
+\>", "Text"],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["Placeholder"],
+    Placeholder->True,
+    StyleMenuListing->None,
+    FontSlant->"Italic",
+    FontColor->RGBColor[0.890623, 0.864698, 0.384756],
+    TagBoxOptions->{Editable->False,
+    Selectable->False,
+    StripWrapperBoxes->False}],
+  
+  Cell[StyleData["Placeholder", "Presentation"]],
+  
+  Cell[StyleData["Placeholder", "Condensed"]],
+  
+  Cell[StyleData["Placeholder", "Printout"]]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell[StyleData["PrimaryPlaceholder"],
+    StyleMenuListing->None,
+    DrawHighlighted->True,
+    FontSlant->"Italic",
+    Background->RGBColor[0.912505, 0.891798, 0.507774],
+    TagBoxOptions->{Editable->False,
+    Selectable->False,
+    StripWrapperBoxes->False}],
+  
+  Cell[StyleData["PrimaryPlaceholder", "Presentation"]],
+  
+  Cell[StyleData["PrimaryPlaceholder", "Condensed"]],
+  
+  Cell[StyleData["PrimaryPlaceholder", "Printout"]]
+  }, Closed]]
+  }, Closed]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["FormatType Styles", "Section"],
+  
+  Cell["\<\
+The cells below define styles that are mixed in with the styles \
+of most cells.  If a cell's FormatType matches the name of one of the styles \
+defined below, then that style is applied between the cell's style and its \
+own options. This is particularly true of Input and Output.\
+\>", "Text"],
+  
+  Cell[StyleData["CellExpression"],
+    PageWidth->Infinity,
+    CellMargins->{{6, Inherited}, {Inherited, Inherited}},
+    ShowCellLabel->False,
+    ShowSpecialCharacters->False,
+    AllowInlineCells->False,
+    Hyphenation->False,
+    AutoItalicWords->{},
+    StyleMenuListing->None,
+    FontFamily->"Courier",
+    FontSize->12,
+    Background->GrayLevel[1]],
+  
+  Cell[StyleData["InputForm"],
+    InputAutoReplacements->{},
+    AllowInlineCells->False,
+    Hyphenation->False,
+    StyleMenuListing->None,
+    FontFamily->"Courier"],
+  
+  Cell[StyleData["OutputForm"],
+    PageWidth->Infinity,
+    TextAlignment->Left,
+    LineSpacing->{0.6, 1},
+    StyleMenuListing->None,
+    FontFamily->"Courier"],
+  
+  Cell[StyleData["StandardForm"],
+    InputAutoReplacements->{
+      "->"->"\[Rule]", ":>"->"\[RuleDelayed]", "<="->"\[LessEqual]", 
+        ">="->"\[GreaterEqual]", "!="->"\[NotEqual]", "=="->"\[Equal]", 
+        Inherited},
+    LineSpacing->{1.25, 0},
+    StyleMenuListing->None,
+    FontFamily->"Courier"],
+  
+  Cell[StyleData["TraditionalForm"],
+    InputAutoReplacements->{
+      "->"->"\[Rule]", ":>"->"\[RuleDelayed]", "<="->"\[LessEqual]", 
+        ">="->"\[GreaterEqual]", "!="->"\[NotEqual]", "=="->"\[Equal]", 
+        Inherited},
+    LineSpacing->{1.25, 0},
+    TraditionalFunctionNotation->True,
+    DelimiterMatching->None,
+    StyleMenuListing->None],
+  
+  Cell["\<\
+The style defined below is mixed in to any cell that is in an \
+inline cell within another.\
+\>", "Text"],
+  
+  Cell[StyleData["InlineCell"],
+    LanguageCategory->"Formula",
+    ScriptLevel->1,
+    StyleMenuListing->None],
+  
+  Cell[StyleData["InlineCellEditing"],
+    StyleMenuListing->None,
+    Background->RGBColor[1, 0.749996, 0.8]]
+  }, Open  ]],
+  
+  Cell[CellGroupData[{
+  
+  Cell["Automatic Styles", "Section"],
+  
+  Cell["\<\
+The cells below define styles that are used to affect the display \
+of certain types of objects in typeset expressions.  For example, \
+\"UnmatchedBracket\" style defines how unmatched bracket, curly bracket, and \
+parenthesis characters are displayed (typically by coloring them to make them \
+stand out).\
+\>", "Text"],
+  
+  Cell[StyleData["UnmatchedBracket"],
+    StyleMenuListing->None,
+    FontColor->RGBColor[0.760006, 0.330007, 0.8]]
+  }, Closed]]
+  }, Open  ]]
+  }]
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{
+  "Instalation"->{
+    Cell[5488, 178, 194, 5, 94, "Text",
+      CellTags->"Instalation"]},
+  "Golden-Secant"->{
+    Cell[69323, 1990, 1877, 29, 625, "Text",
+      CellTags->"Golden-Secant"]},
+  "Brent's paper"->{
+    Cell[83936, 2399, 189, 5, 94, "Text",
+      CellTags->"Brent's paper"]},
+  "Brent's book"->{
+    Cell[84128, 2406, 154, 4, 61, "Text",
+      CellTags->"Brent's book"]},
+  "Numerical Recipes"->{
+    Cell[85344, 2447, 192, 5, 94, "Text",
+      CellTags->"Numerical Recipes"]},
+  "Stewart 1993"->{
+    Cell[85864, 2465, 183, 5, 94, "Text",
+      CellTags->"Stewart 1993"]}
+  }
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{
+  {"Instalation", 124761, 3790},
+  {"Golden-Secant", 124855, 3793},
+  {"Brent's paper", 124956, 3796},
+  {"Brent's book", 125053, 3799},
+  {"Numerical Recipes", 125154, 3802},
+  {"Stewart 1993", 125255, 3805}
+  }
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1727, 52, 401, 15, 360, "Title"],
+
+Cell[CellGroupData[{
+Cell[2153, 71, 34, 0, 152, "Section"],
+
+Cell[CellGroupData[{
+Cell[2212, 75, 33, 0, 109, "Subsection"],
+Cell[2248, 77, 151, 5, 61, "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[2436, 87, 33, 0, 73, "Subsection"],
+Cell[2472, 89, 138, 3, 94, "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[2647, 97, 33, 0, 73, "Subsection"],
+Cell[2683, 99, 618, 12, 160, "Text"],
+Cell[3304, 113, 172, 3, 89, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[3513, 121, 33, 0, 73, "Subsection"],
+Cell[3549, 123, 474, 9, 391, "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[4060, 137, 33, 0, 73, "Subsection"],
+Cell[4096, 139, 628, 11, 292, "Text"]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[4773, 156, 53, 0, 152, "Section"],
+Cell[4829, 158, 257, 5, 94, "Text"],
+
+Cell[CellGroupData[{
+Cell[5111, 167, 243, 4, 157, "Input"],
+Cell[5357, 173, 116, 2, 55, "Output"]
+}, Open  ]],
+Cell[5488, 178, 194, 5, 94, "Text",
+  CellTags->"Instalation"],
+Cell[5685, 185, 63, 1, 55, "Input"],
+Cell[5751, 188, 69, 0, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[5845, 192, 48, 1, 55, "Input"],
+Cell[5896, 195, 178, 3, 81, "Print"]
+}, Open  ]],
+Cell[6089, 201, 1022, 17, 325, "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[7148, 223, 27, 0, 108, "Section"],
+
+Cell[CellGroupData[{
+Cell[7200, 227, 31, 0, 109, "Subsection"],
+Cell[7234, 229, 106, 3, 61, "Text"],
+Cell[7343, 234, 142, 2, 119, "Input"],
+
+Cell[CellGroupData[{
+Cell[7510, 240, 86, 1, 55, "Input"],
+Cell[7599, 243, 836, 11, 191, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[8472, 259, 42, 1, 55, "Input"],
+Cell[8517, 262, 36, 1, 55, "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[8602, 269, 31, 0, 73, "Subsection"],
+Cell[8636, 271, 429, 9, 127, "Text"],
+Cell[9068, 282, 305, 6, 133, "Input"],
+
+Cell[CellGroupData[{
+Cell[9398, 292, 86, 1, 55, "Input"],
+Cell[9487, 295, 116, 2, 55, "Output"]
+}, Open  ]],
+Cell[9618, 300, 230, 4, 94, "Text"],
+
+Cell[CellGroupData[{
+Cell[9873, 308, 46, 1, 55, "Input"],
+Cell[9922, 311, 64, 1, 56, "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[10035, 318, 31, 0, 73, "Subsection"],
+Cell[10069, 320, 364, 6, 127, "Text"],
+Cell[10436, 328, 107, 2, 87, "Input",
+  Evaluatable->False],
+Cell[10546, 332, 108, 3, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[10679, 339, 92, 1, 55, "Input"],
+Cell[10774, 342, 387, 9, 74, "Output"]
+}, Open  ]],
+Cell[11176, 354, 94, 3, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[11295, 361, 121, 3, 55, "Input"],
+Cell[11419, 366, 66, 1, 55, "Output"]
+}, Open  ]],
+Cell[11500, 370, 390, 10, 94, "Text"],
+
+Cell[CellGroupData[{
+Cell[11915, 384, 50, 1, 55, "Input"],
+Cell[11968, 387, 64, 1, 56, "Output"]
+}, Open  ]],
+Cell[12047, 391, 349, 6, 127, "Text"],
+
+Cell[CellGroupData[{
+Cell[12421, 401, 87, 1, 55, "Input"],
+Cell[12511, 404, 39, 1, 55, "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[12599, 411, 31, 0, 73, "Subsection"],
+Cell[12633, 413, 103, 3, 61, "Text"],
+Cell[12739, 418, 254, 4, 123, "Input"],
+Cell[12996, 424, 479, 9, 160, "Text"],
+
+Cell[CellGroupData[{
+Cell[13500, 437, 88, 1, 55, "Input"],
+Cell[13591, 440, 110, 2, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[13738, 447, 46, 1, 55, "Input"],
+Cell[13787, 450, 44, 1, 55, "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[13880, 457, 31, 0, 73, "Subsection"],
+Cell[13914, 459, 124, 3, 61, "Text"],
+Cell[14041, 464, 271, 5, 123, "Input"],
+Cell[14315, 471, 74, 0, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[14414, 475, 87, 1, 55, "Input"],
+Cell[14504, 478, 187, 3, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[14728, 486, 46, 1, 55, "Input"],
+Cell[14777, 489, 132, 2, 56, "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[14958, 497, 31, 0, 73, "Subsection"],
+Cell[14992, 499, 429, 11, 127, "Text"],
+
+Cell[CellGroupData[{
+Cell[15446, 514, 271, 5, 129, "Input"],
+Cell[15720, 521, 75, 1, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[15832, 527, 126, 3, 55, "Input"],
+Cell[15961, 532, 155, 2, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[16153, 539, 46, 1, 55, "Input"],
+Cell[16202, 542, 44, 1, 55, "Output"]
+}, Open  ]],
+Cell[16261, 546, 122, 2, 89, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[16420, 553, 31, 0, 73, "Subsection"],
+Cell[16454, 555, 492, 9, 160, "Text"],
+Cell[16949, 566, 219, 4, 89, "Input"],
+Cell[17171, 572, 224, 4, 94, "Text"],
+
+Cell[CellGroupData[{
+Cell[17420, 580, 132, 2, 55, "Input"],
+Cell[17555, 584, 3836, 51, 701, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[21428, 640, 42, 1, 55, "Input"],
+Cell[21473, 643, 37, 1, 55, "Output"]
+}, Open  ]]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[21571, 651, 36, 0, 108, "Section"],
+Cell[21610, 653, 71, 0, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[21706, 657, 55, 1, 55, "Input"],
+Cell[21764, 660, 423, 6, 217, "Print"]
+}, Open  ]],
+Cell[22202, 669, 188, 4, 94, "Text"],
+
+Cell[CellGroupData[{
+Cell[22415, 677, 241, 5, 123, "Input"],
+Cell[22659, 684, 110, 2, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[22806, 691, 63, 1, 55, "Input"],
+Cell[22872, 694, 1276, 26, 656, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[24185, 725, 60, 1, 55, "Input"],
+Cell[24248, 728, 36, 1, 55, "Output"]
+}, Open  ]],
+Cell[24299, 732, 130, 3, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[24454, 739, 249, 5, 123, "Input"],
+Cell[24706, 746, 187, 3, 55, "Output"]
+}, Open  ]],
+Cell[24908, 752, 233, 4, 94, "Text"],
+Cell[25144, 758, 105, 2, 55, "Input"],
+Cell[25252, 762, 95, 3, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[25372, 769, 106, 2, 55, "Input"],
+Cell[25481, 773, 1527, 29, 790, "Output"]
+}, Open  ]],
+Cell[27023, 805, 108, 3, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[27156, 812, 103, 2, 55, "Input"],
+Cell[27262, 816, 1166, 24, 570, "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[28477, 846, 37, 0, 108, "Section"],
+Cell[28517, 848, 104, 3, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[28646, 855, 65, 1, 55, "Input"],
+Cell[28714, 858, 957, 22, 240, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[29708, 885, 36, 0, 109, "Subsection"],
+Cell[29747, 887, 72, 0, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[29844, 891, 51, 1, 55, "Input"],
+Cell[29898, 894, 181, 3, 115, "Print"]
+}, Open  ]],
+Cell[30094, 900, 104, 3, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[30223, 907, 140, 3, 82, "Input"],
+Cell[30366, 912, 420, 6, 191, "Output"]
+}, Open  ]],
+Cell[30801, 921, 133, 3, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[30959, 928, 62, 1, 82, "Input"],
+Cell[31024, 931, 156, 3, 56, "Output"]
+}, Open  ]],
+Cell[31195, 937, 389, 9, 124, "Text"],
+
+Cell[CellGroupData[{
+Cell[31609, 950, 140, 3, 78, "Input"],
+Cell[31752, 955, 224, 3, 89, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[32013, 963, 62, 1, 82, "Input"],
+Cell[32078, 966, 148, 2, 56, "Output"]
+}, Open  ]],
+Cell[32241, 971, 145, 4, 78, "Text"],
+
+Cell[CellGroupData[{
+Cell[32411, 979, 145, 3, 55, "Input"],
+Cell[32559, 984, 461, 7, 225, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[33057, 996, 69, 1, 55, "Input"],
+Cell[33129, 999, 549, 11, 91, "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[33727, 1016, 38, 0, 73, "Subsection"],
+Cell[33768, 1018, 75, 0, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[33868, 1022, 54, 1, 55, "Input"],
+Cell[33925, 1025, 404, 6, 217, "Print"]
+}, Open  ]],
+Cell[34344, 1034, 795, 16, 227, "Text"],
+
+Cell[CellGroupData[{
+Cell[35164, 1054, 150, 3, 55, "Input"],
+Cell[35317, 1059, 66, 1, 55, "Output"]
+}, Open  ]],
+Cell[35398, 1063, 150, 3, 94, "Text"],
+
+Cell[CellGroupData[{
+Cell[35573, 1070, 50, 1, 55, "Input"],
+Cell[35626, 1073, 39, 1, 55, "Output"]
+}, Open  ]],
+Cell[35680, 1077, 200, 5, 111, "Text"],
+
+Cell[CellGroupData[{
+Cell[35905, 1086, 196, 3, 123, "Input"],
+Cell[36104, 1091, 551, 11, 126, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[36692, 1107, 45, 1, 55, "Input"],
+Cell[36740, 1110, 363, 6, 125, "Output"]
+}, Open  ]],
+Cell[37118, 1119, 399, 7, 160, "Text"],
+
+Cell[CellGroupData[{
+Cell[37542, 1130, 120, 3, 55, "Input"],
+Cell[37665, 1135, 138, 2, 74, "Output"]
+}, Open  ]],
+Cell[37818, 1140, 252, 5, 94, "Text"],
+
+Cell[CellGroupData[{
+Cell[38095, 1149, 79, 1, 55, "Input"],
+Cell[38177, 1152, 52, 0, 78, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[38266, 1157, 79, 1, 55, "Input"],
+Cell[38348, 1160, 68, 3, 107, "Output"]
+}, Open  ]],
+Cell[38431, 1166, 427, 7, 160, "Text"],
+
+Cell[CellGroupData[{
+Cell[38883, 1177, 158, 3, 89, "Input"],
+Cell[39044, 1182, 847, 12, 406, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[39928, 1199, 45, 1, 55, "Input"],
+Cell[39976, 1202, 323, 6, 91, "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[40348, 1214, 30, 0, 73, "Subsection"],
+Cell[40381, 1216, 564, 9, 193, "Text"],
+
+Cell[CellGroupData[{
+Cell[40970, 1229, 46, 1, 55, "Input"],
+Cell[41019, 1232, 556, 8, 285, "Print"]
+}, Open  ]],
+Cell[41590, 1243, 508, 13, 130, "Text"],
+Cell[42101, 1258, 177, 3, 123, "Input"],
+Cell[42281, 1263, 272, 7, 96, "Text"],
+
+Cell[CellGroupData[{
+Cell[42578, 1274, 124, 2, 55, "Input"],
+Cell[42705, 1278, 116, 2, 55, "Output"]
+}, Open  ]],
+Cell[42836, 1283, 379, 7, 128, "Text"],
+
+Cell[CellGroupData[{
+Cell[43240, 1294, 127, 2, 55, "Input"],
+Cell[43370, 1298, 36, 1, 55, "Output"]
+}, Open  ]],
+Cell[43421, 1302, 337, 6, 127, "Text"],
+
+Cell[CellGroupData[{
+Cell[43783, 1312, 115, 2, 55, "Input"],
+Cell[43901, 1316, 116, 2, 55, "Output"]
+}, Open  ]],
+Cell[44032, 1321, 493, 11, 127, "Text"],
+
+Cell[CellGroupData[{
+Cell[44550, 1336, 120, 2, 55, "Input"],
+Cell[44673, 1340, 67, 1, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[44777, 1346, 60, 0, 98, "Subsubsection"],
+Cell[44840, 1348, 69, 0, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[44934, 1352, 62, 1, 55, "Input"],
+Cell[44999, 1355, 163, 3, 56, "Output"]
+}, Open  ]],
+Cell[45177, 1361, 289, 6, 127, "Text"],
+Cell[45469, 1369, 147, 4, 55, "Input",
+  Evaluatable->False],
+Cell[45619, 1375, 309, 8, 94, "Text"],
+Cell[45931, 1385, 160, 4, 57, "Input",
+  Evaluatable->False],
+Cell[46094, 1391, 123, 3, 61, "Text"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[46266, 1400, 35, 0, 73, "Subsection"],
+Cell[46304, 1402, 72, 0, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[46401, 1406, 51, 1, 55, "Input"],
+Cell[46455, 1409, 212, 3, 115, "Print"]
+}, Open  ]],
+Cell[46682, 1415, 646, 11, 193, "Text"],
+
+Cell[CellGroupData[{
+Cell[47353, 1430, 238, 4, 123, "Input"],
+Cell[47594, 1436, 52, 1, 55, "Output"]
+}, Open  ]],
+Cell[47661, 1440, 50, 0, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[47736, 1444, 134, 2, 55, "Input"],
+Cell[47873, 1448, 159, 2, 55, "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[48081, 1456, 36, 0, 73, "Subsection"],
+Cell[48120, 1458, 73, 0, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[48218, 1462, 52, 1, 55, "Input"],
+Cell[48273, 1465, 223, 3, 115, "Print"]
+}, Open  ]],
+Cell[48511, 1471, 326, 6, 127, "Text"],
+
+Cell[CellGroupData[{
+Cell[48862, 1481, 378, 9, 201, "Input"],
+Cell[49243, 1492, 72, 1, 55, "Output"]
+}, Open  ]],
+Cell[49330, 1496, 61, 0, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[49416, 1500, 129, 3, 55, "Input"],
+Cell[49548, 1505, 116, 2, 55, "Output"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[49713, 1513, 36, 0, 73, "Subsection"],
+Cell[49752, 1515, 73, 0, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[49850, 1519, 52, 1, 55, "Input"],
+Cell[49905, 1522, 221, 3, 115, "Print"]
+}, Open  ]],
+Cell[50141, 1528, 376, 6, 127, "Text"],
+
+Cell[CellGroupData[{
+Cell[50542, 1538, 255, 6, 183, "Input"],
+Cell[50800, 1546, 451, 6, 123, "Output"]
+}, Open  ]],
+Cell[51266, 1555, 98, 3, 61, "Text"],
+
+Cell[CellGroupData[{
+Cell[51389, 1562, 193, 4, 119, "Input"],
+Cell[51585, 1568, 836, 11, 191, "Output"],
+Cell[52424, 1581, 36, 1, 55, "Output"]
+}, Open  ]]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[52521, 1589, 43, 0, 108, "Section"],
+Cell[52567, 1591, 2249, 42, 787, "Text"],
+
+Cell[CellGroupData[{
+Cell[54841, 1637, 149, 5, 109, "Subsection"],
+Cell[54993, 1644, 1266, 26, 325, "Text"],
+Cell[56262, 1672, 1078, 28, 259, "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[57377, 1705, 52, 0, 73, "Subsection"],
+Cell[57432, 1707, 1259, 18, 391, "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[58728, 1730, 37, 0, 73, "Subsection"],
+Cell[58768, 1732, 1367, 28, 655, "Text"],
+
+Cell[CellGroupData[{
+Cell[60160, 1764, 30, 0, 98, "Subsubsection"],
+Cell[60193, 1766, 404, 7, 160, "Text"],
+Cell[60600, 1775, 900, 17, 463, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[61537, 1797, 30, 0, 66, "Subsubsection"],
+Cell[61570, 1799, 495, 8, 193, "Text"],
+Cell[62068, 1809, 979, 19, 497, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[63084, 1833, 30, 0, 66, "Subsubsection"],
+Cell[63117, 1835, 312, 5, 127, "Text"],
+Cell[63432, 1842, 947, 17, 531, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[64416, 1864, 30, 0, 66, "Subsubsection"],
+Cell[64449, 1866, 682, 13, 292, "Text"],
+Cell[65134, 1881, 1115, 22, 575, "Input"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[66298, 1909, 37, 0, 73, "Subsection"],
+Cell[66338, 1911, 537, 11, 292, "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[66912, 1927, 50, 0, 73, "Subsection"],
+Cell[66965, 1929, 185, 4, 94, "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[67187, 1938, 47, 0, 73, "Subsection"],
+
+Cell[CellGroupData[{
+Cell[67259, 1942, 69, 0, 98, "Subsubsection"],
+Cell[67331, 1944, 1222, 20, 391, "Text"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[68590, 1969, 97, 3, 66, "Subsubsection"],
+Cell[68690, 1974, 536, 8, 193, "Text"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[69275, 1988, 45, 0, 73, "Subsection"],
+Cell[69323, 1990, 1877, 29, 625, "Text",
+  CellTags->"Golden-Secant"],
+
+Cell[CellGroupData[{
+Cell[71225, 2023, 62, 0, 98, "Subsubsection"],
+Cell[71290, 2025, 390, 7, 160, "Text"],
+
+Cell[CellGroupData[{
+Cell[71705, 2036, 214, 4, 157, "Input"],
+Cell[71922, 2042, 53, 1, 55, "Output"]
+}, Open  ]],
+Cell[71990, 2046, 527, 8, 327, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[72554, 2059, 70, 0, 66, "Subsubsection"],
+Cell[72627, 2061, 356, 6, 127, "Text"],
+
+Cell[CellGroupData[{
+Cell[73008, 2071, 343, 5, 191, "Input"],
+Cell[73354, 2078, 152, 2, 55, "Output"]
+}, Open  ]],
+Cell[73521, 2083, 620, 10, 193, "Text"],
+
+Cell[CellGroupData[{
+Cell[74166, 2097, 84, 1, 55, "Input"],
+Cell[74253, 2100, 52, 1, 55, "Output"]
+}, Open  ]],
+Cell[74320, 2104, 650, 12, 361, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[75007, 2121, 79, 0, 66, "Subsubsection"],
+Cell[75089, 2123, 497, 8, 160, "Text"],
+
+Cell[CellGroupData[{
+Cell[75611, 2135, 200, 4, 157, "Input"],
+Cell[75814, 2141, 104, 2, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[75955, 2148, 84, 1, 55, "Input"],
+Cell[76042, 2151, 52, 1, 55, "Output"]
+}, Open  ]],
+Cell[76109, 2155, 573, 9, 293, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[76719, 2169, 70, 0, 66, "Subsubsection"],
+Cell[76792, 2171, 576, 9, 193, "Text"],
+
+Cell[CellGroupData[{
+Cell[77393, 2184, 187, 4, 157, "Input"],
+Cell[77583, 2190, 104, 2, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[77724, 2197, 123, 2, 89, "Input"],
+Cell[77850, 2201, 80, 1, 55, "Output"]
+}, Open  ]],
+Cell[77945, 2205, 441, 7, 259, "Input"]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[78423, 2217, 77, 0, 66, "Subsubsection"],
+Cell[78503, 2219, 299, 6, 127, "Text"],
+
+Cell[CellGroupData[{
+Cell[78827, 2229, 225, 4, 123, "Input"],
+Cell[79055, 2235, 93, 1, 55, "Output"]
+}, Open  ]],
+Cell[79163, 2239, 780, 13, 361, "Input"],
+
+Cell[CellGroupData[{
+Cell[79968, 2256, 84, 1, 55, "Input"],
+Cell[80055, 2259, 53, 1, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[80145, 2265, 154, 2, 89, "Input"],
+Cell[80302, 2269, 57, 1, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[80396, 2275, 154, 2, 89, "Input"],
+Cell[80553, 2279, 53, 1, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[80643, 2285, 154, 2, 89, "Input"],
+Cell[80800, 2289, 58, 1, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[80895, 2295, 154, 2, 89, "Input"],
+Cell[81052, 2299, 53, 1, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[81142, 2305, 154, 2, 89, "Input"],
+Cell[81299, 2309, 58, 1, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[81394, 2315, 154, 2, 89, "Input"],
+Cell[81551, 2319, 53, 1, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[81641, 2325, 154, 2, 89, "Input"],
+Cell[81798, 2329, 58, 1, 55, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[81893, 2335, 154, 2, 89, "Input"],
+Cell[82050, 2339, 51, 1, 55, "Output"]
+}, Open  ]],
+Cell[82116, 2343, 356, 6, 127, "Text"]
+}, Closed]]
+}, Closed]],
+
+Cell[CellGroupData[{
+Cell[82521, 2355, 32, 0, 73, "Subsection"],
+Cell[82556, 2357, 338, 7, 160, "Text"],
+Cell[82897, 2366, 203, 4, 94, "Text"],
+Cell[83103, 2372, 131, 3, 61, "Text"],
+Cell[83237, 2377, 153, 3, 94, "Text"],
+Cell[83393, 2382, 189, 4, 94, "Text"],
+Cell[83585, 2388, 222, 4, 94, "Text"],
+Cell[83810, 2394, 123, 3, 61, "Text"],
+Cell[83936, 2399, 189, 5, 94, "Text",
+  CellTags->"Brent's paper"],
+Cell[84128, 2406, 154, 4, 61, "Text",
+  CellTags->"Brent's book"],
+Cell[84285, 2412, 149, 3, 94, "Text"],
+Cell[84437, 2417, 128, 3, 61, "Text"],
+Cell[84568, 2422, 205, 5, 94, "Text"],
+Cell[84776, 2429, 165, 4, 94, "Text"],
+Cell[84944, 2435, 185, 4, 94, "Text"],
+Cell[85132, 2441, 209, 4, 94, "Text"],
+Cell[85344, 2447, 192, 5, 94, "Text",
+  CellTags->"Numerical Recipes"],
+Cell[85539, 2454, 126, 3, 61, "Text"],
+Cell[85668, 2459, 193, 4, 94, "Text"],
+Cell[85864, 2465, 183, 5, 94, "Text",
+  CellTags->"Stewart 1993"],
+Cell[86050, 2472, 133, 3, 61, "Text"],
+Cell[86186, 2477, 278, 6, 61, "Text"],
+Cell[86467, 2485, 196, 3, 61, "Text"],
+Cell[86666, 2490, 208, 4, 61, "Text"]
+}, Closed]]
+}, Closed]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+
